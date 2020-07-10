@@ -1,5 +1,5 @@
 % derivative.tex
-% Copyright 2019 Simon Jensen
+% Copyright 2019-2020 Simon Jensen
 % 
 % This work may be distributed and/or modified under the
 % conditions of the LaTeX Project Public License, either version 1.3
@@ -120,7 +120,7 @@
 	basicstyle = \ttfamily\upshape\small,
 	escapechar = \%,
 	alsoletter =  {\\,-},
-	keywords = [0]{style-inf, add-delims,sep-inf-ord,sep-ord-fun},
+	keywords = [0]{style-inf, mics-add-delims,sep-inf-ord,sep-ord-fun},
 	keywordstyle = [0]\__mydoc_option_font:,
 	keywords = [1]{\\odv, \\mdv, \\fdv, \\adv, \\jdv, \\pdv, \\NewOdvVariant, \\RenewOdvVariant, \\ProvideOdvVariant, \\DeclareOdvVariant, \\NewPdvVariant, \\RenewPdvVariant, \\ProvidePdvVariant, \\DeclarePdvVariant},
 	keywordstyle = [1]\__mydoc_function_font:,
@@ -338,8 +338,6 @@
 \cs_new_protected:Npn \mydoc_ch_end:
 {
 }
-
-
 
 \tl_new:N \l__mydoc_number_tl
 \tl_new:N \l_mydoc_index_item_tl
@@ -673,7 +671,7 @@
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-\NewDocumentEnvironment{example}{ s o b }
+\DeclareDocumentEnvironment{example}{ s o b }
 {  \__mydoc_example_begin:nn {#1} {#3}  }
 {  \__mydoc_example_end:                }
 
@@ -722,7 +720,7 @@
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-\NewDocumentEnvironment{function}{ s o m }
+\DeclareDocumentEnvironment{function}{ s o m }
 {
 	\tl_if_novalue:nF {#2} { \mydoc_set_keys:nn { function } {#2} }
 	\__mydoc_function_begin:n  {#1}
@@ -732,7 +730,7 @@
 	\__mydoc_function_end:
 }
 
-\NewDocumentEnvironment{syntax}{ o b }
+\DeclareDocumentEnvironment{syntax}{ o b }
 {
 	\tl_if_novalue:nF {#1} { \mydoc_set_keys:nn { syntax } {#1} }
 	\__mydoc_syntax_begin:
@@ -742,7 +740,7 @@
 	\__mydoc_syntax_end:
 }
 
-\NewDocumentEnvironment{argument}{ s o m }
+\DeclareDocumentEnvironment{argument}{ s o m }
 {
 	\tl_if_novalue:nF {#2} { \mydoc_set_keys:nn { argument } {#2} }
 	\__mydoc_argument_begin:n  {#1}
@@ -752,7 +750,7 @@
 	\__mydoc_argument_end:
 }
 
-\NewDocumentEnvironment{option}{ s o m }
+\DeclareDocumentEnvironment{option}{ s o m }
 {
 	\tl_if_novalue:nF {#2} { \mydoc_set_keys:nn { option } {#2} }
 	\__mydoc_option_begin:n  {#1}
@@ -762,7 +760,7 @@
 	\__mydoc_option_end:
 }
 
-\NewDocumentEnvironment{values}{ o b }
+\DeclareDocumentEnvironment{values}{ o b }
 {
 	\tl_if_novalue:nF {#1} { \mydoc_set_keys:nn { values } {#1} }
 	\__mydoc_values_begin:
@@ -773,7 +771,7 @@
 }
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-\NewDocumentCommand{\default}{ s O{values} }
+\DeclareDocumentCommand{\default}{ s O{values} }
 {
 	\group_begin:
 	\mydoc_default:nn {#1} {#2}
@@ -789,7 +787,7 @@
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-\NewDocumentCommand{\macro}{ o m o }
+\DeclareDocumentCommand{\macro}{ o m o }
 {
 	\group_begin:
 	\tl_if_novalue:nF {#1} { \mydoc_set_keys:nn { macro } { #1 } }
@@ -817,7 +815,7 @@
 	}
 }
 
-\RenewDocumentCommand{\arg}{ o m }
+\DeclareDocumentCommand{\arg}{ o m }
 {
 	\group_begin:
 	\mydoc_arg:n {#2}
@@ -832,7 +830,7 @@
 	{  #1                                      }
 }
 
-\NewDocumentCommand{\key}{ o m }
+\DeclareDocumentCommand{\key}{ o m }
 {
 	\group_begin:
 	\tl_if_novalue:nF {#1} { \mydoc_set_keys:nn { key } {#1} }
@@ -840,15 +838,16 @@
 	\group_end:
 }
 
-\NewDocumentCommand{\val}{ o m }
-{
-	\group_begin:
-	\tl_if_novalue:nF {#1} { \mydoc_set_keys:nn { val } {#1} }
-	\mydoc_val:n {#2}
-	\group_end:
+\AtBeginDocument{
+	\DeclareDocumentCommand{\val}{ o m }
+	{
+		\group_begin:
+		\tl_if_novalue:nF {#1} { \mydoc_set_keys:nn { val } {#1} }
+		\mydoc_val:n {#2}
+		\group_end:
+	}
 }
-
-\NewDocumentCommand{\keyval}{ o m m }
+\DeclareDocumentCommand{\keyval}{ o m m }
 {
 	\group_begin:
 	\tl_if_novalue:nF {#1} { \mydoc_set_keys:nn { key } {#1} }
@@ -922,9 +921,9 @@
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-\NewDocumentCommand{\tsb}{ m }{ \textsubscript{#1} }
+\DeclareDocumentCommand{\tsb}{ m }{ \textsubscript{#1} }
 
-\NewDocumentCommand{\meta}{ m }
+\DeclareDocumentCommand{\meta}{ m }
 {
 	\ensuremath{\langle}
 	\group_begin:
@@ -934,43 +933,43 @@
 	\ensuremath{\rangle}
 }
 
-\NewDocumentCommand{\marg}{ m }
+\DeclareDocumentCommand{\marg}{ m }
 {
 	\group_begin:
 	\mydoc_marg:n {#1}
 	\group_end:
 }
-\NewDocumentCommand{\narg}{ m }
+\DeclareDocumentCommand{\narg}{ m }
 {
 	\group_begin:
 	\mydoc_narg:n {#1}
 	\group_end:
 }
-\NewDocumentCommand{\oarg}{ m }
+\DeclareDocumentCommand{\oarg}{ m }
 {
 	\group_begin:
 	\mydoc_oarg:n {#1}
 	\group_end:
 }
-\NewDocumentCommand{\earg}{ m }
+\DeclareDocumentCommand{\earg}{ m }
 {
 	\group_begin:
 	\mydoc_earg:n {#1}
 	\group_end:
 }
-\NewDocumentCommand{\targ}{ m }
+\DeclareDocumentCommand{\targ}{ m }
 {
 	\group_begin:
 	\mydoc_targ:n {#1}
 	\group_end:
 }
-\NewDocumentCommand{\sarg}{ }
+\DeclareDocumentCommand{\sarg}{ }
 {
 	\group_begin:
 	\mydoc_sarg:
 	\group_end:
 }
-\NewDocumentCommand{\cs}{ m }
+\DeclareDocumentCommand{\cs}{ m }
 {
 	\group_begin:
 	\mydoc_cs:n {#1}
@@ -1037,7 +1036,7 @@
 	\group_end:
 }
 
-\NewDocumentCommand{\low}{ O{0,0} m m }
+\DeclareDocumentCommand{\low}{ O{0,0} m m }
 {
 	\seq_set_from_clist:Nn \l__low_seq {#1}
 	
@@ -1053,7 +1052,7 @@
 	\mskip -\seq_item:Nn \l__low_seq {2} mu
 }
 
-\NewDocumentCommand{\ms}{ m }
+\DeclareDocumentCommand{\ms}{ m }
 {
 	\group_begin:
 	\text
@@ -1073,21 +1072,21 @@
 {  \char` \\ \cs_to_str:N #1  }
 \cs_generate_variant:Nn \mydoc_cs_to_str:n { x }
 
-\NewDocumentCommand{\cstostr}{ m }
+\DeclareDocumentCommand{\cstostr}{ m }
 {  \mydoc_cs_to_str:N #1 }
 
-\makeatother
 \ExplSyntaxOff
+\makeatother
 
 \Pakkenavn{derivative}
 \Titel{The \pakkenavn{} package}
 \Forfatter{Simon Jensen}
 \Email{sjelatex@gmail.com}
-\Dato{2019/09/21}
-\Version{0.95b}
+\Dato{2020/02/03}
+\Version{0.97}
 
 \RequirePackage{derivative}[\dato]
-\derivset{all}[scale-auto = mleftmright]
+	\derivset{all}[scale-auto = mleftmright]
 
 \hypersetup
 {
@@ -1121,11 +1120,14 @@
 	
 	\clearpage
 	\section{Introduction}
-	This is a beta version meaning that some elements might be changed in the official release. Using this package in its current state is therefore on your own risk. An update will be made before the official release explaining what will be changed and what impact this might cause.
+	This is a beta version meaning that some elements might be changed in the official release. Using this package in its current state is therefore on your own risk. The next update, version \texttt{v1.0}, will contain the changes specified in \cref{sec:todo}.
 	
-	This package started as a personnel package a few years ago that I used in various projects. Firstly, it was written in \tex and \latex, which gave rise to various errors as the complexity of the package grew larger and ended up as a spaghetti code. Therefore, the code was rewritten into the \latex3 language and may now be easily maintained. Originally this package was written because there did not exist any great package for derivatives. It was first much later that I discovered the \pkg{diffcoeff} package, which does a good job. However, at this time, I had already written much of the code with no documentation. I decided to write one and make it into a package for the public.
+	This package started as a personal package a few years ago that I used in various projects. Firstly, it was written in \tex{} and \latex, which gave rise to various errors as the complexity of the package grew larger and ended up as a spaghetti code. Therefore, the code was rewritten into the \latex3 language and may now be easily maintained. Originally this package was written because there did not exist any great package for derivatives. It was first much later that I discovered the \pkg{diffcoeff} package, which does a good job. However, at this time, I had already written much of the code with no documentation. I decided to write one and make it into a package for the public.
 	
-	As a note on terminology, I use the wording \emph{infinitesimal} and abbreviated as \texttt{inf} for the operator symbol $d, \partial, \delta$ etc. used in various derivatives like $\odv{y}{x}, \pdv{y}{x}, \fdv{y}{x}$ etc. Moreover I explicitly use \emph{differential d} for $d$ and \emph{partial} for $\partial$. In the description of macros and options, I often write \emph{cs-\meta{placeholder}} to denote a comma-separated list of \meta{placeholder}. For example, \oarg{cs-orders} is used in the partial derivative's description to denote the order differentiation and is read as a comma-separated list of orders. It should also be noted that whenever an argument reads \meta{key=value}, it means that it is a comma-separated list of key-value pairs.
+	As a note on terminology, I use the wording \emph{infinitesimal} and abbreviated as \texttt{inf} for the operator symbol $d, \partial, \delta$ etc. used in various derivatives like $\odv{y}{x}, \pdv{y}{x}, \fdv{y}{x}$ etc. Moreover, I explicitly use \emph{differential d} for $d$ and \emph{partial} for $\partial$. In the description of macros and options, I often write \emph{cs-\meta{placeholder}} to denote a comma-separated list of \meta{placeholder}. For example, \oarg{cs-orders} is used in the partial derivative's description to denote the order differentiation and is read as a comma-separated list of orders. It should also be noted that whenever an argument reads \meta{key=value}, it means that it is a comma-separated list of key-value pairs.
+	
+	
+	
 	
 	
 	
@@ -1217,7 +1219,7 @@
 	\subsection{Variants}
 	This package offers four variants of the ordinary derivative: Material derivative \macro{\mdv}, functional derivative \macro{\fdv}, the average rate of change \macro{\adv} and the Jacobian \macro{\jdv}. A unique feature of this package, is that you can define your own variants of the ordinary derivative as described in \cref{ssec:CreateOdvVariant}.
 	
-	\begin{function}*{\mdv}
+	\begin{function}{\mdv}
 		\begin{syntax}
 			\sarg, \oarg{order}, \marg{function}, \targ{/}, \marg{variable}, \earg{\_, point\tsb{1}, \^, point\tsb{2}}
 		\end{syntax}
@@ -1234,7 +1236,7 @@
 		\end{equation*}
 	\end{function}
 	
-	\begin{function}*{\fdv}
+	\begin{function}{\fdv}
 		\begin{syntax}
 			\sarg, \oarg{order}, \marg{function}, \targ{/}, \marg{variable}, \earg{\_, point\tsb{1}, \^, point\tsb{2}}
 		\end{syntax}
@@ -1252,7 +1254,7 @@
 		respectively.
 	\end{function}
 	
-	\begin{function}*{\adv}
+	\begin{function}{\adv}
 		\begin{syntax}
 			\sarg, \oarg{order}, \marg{function}, \targ{/}, \marg{variable}, \earg{\_, point\tsb{1}, \^, point\tsb{2}}
 		\end{syntax}
@@ -1269,7 +1271,7 @@
 		\end{equation*}
 	\end{function}
 	
-	\begin{function}*{\jdv}
+	\begin{function}{\jdv}
 		\begin{syntax}
 			\sarg, \oarg{order}, \marg{function}, \targ{/}, \marg{variable}, \earg{\_, point\tsb{1}, \^, point\tsb{2}}
 		\end{syntax}
@@ -1284,6 +1286,9 @@
 		\jdv{f,g,h}{x,y,z}
 		\end{equation*}
 	\end{function}
+	
+	
+	
 	
 	
 	
@@ -1390,6 +1395,9 @@
 	
 	
 	
+	
+	
+	
 	\clearpage
 	\section{Package options}
 	This package accepts its options using the well-known \emph{key=value} syntax. The keys are divided into categories, for which each key have its associated category as a prefix. Each category and option is explained below. 
@@ -1405,7 +1413,7 @@
 		\end{argument}
 		
 		\begin{argument}{2}
-			This optional argument accepts its input as a comma-separated list of \emph{key=value} pairs. Leaving out \arg{2} sets the options to the packages default settings for the chosen \arg{1} e.g. \macro{\derivset}[\marg*{\macro{\odv}}] sets the options for the ordinary derivative to the packages default settings. This argument is subject to change, see \cref{consid:DerivsetOptional} for more information.
+			This optional argument accepts its input as a comma-separated list of \emph{key=value} pairs. Leaving out \arg{2} sets the options to the packages default settings for the chosen \arg{1} e.g. \macro{\derivset}[\narg{\macro{\odv}}] sets the options for the ordinary derivative to the packages default settings. This argument is subject to change, see \cref{consid:DerivsetOptional} for more information.
 		\end{argument}
 	\end{function}
 	
@@ -1962,7 +1970,7 @@
 		\begin{values}[default = false]
 			true, false
 		\end{values}
-		The sorting algorithm \val{number} separates the terms by their absolute value, where the terms are ordered in a descending manner. If the value \val{true} is used, then the terms will ordered in a ascending manner instead. See \cref{ssec:sort-reverse} for more information.
+		The sorting algorithm \val{abs} separates the terms by their absolute value, where the terms are ordered in a descending manner. If the value \val{true} is used, then the terms will ordered in a ascending manner instead. See \cref{ssec:sort-reverse} for more information.
 	\end{option}
 	
 	\subsection{All derivatives} \label{ssec:both_options}
@@ -1977,6 +1985,9 @@
 	
 	
 	
+	
+	
+	
 	\clearpage
 	\section{Defining variants} \label{sec:createvariants}
 	This section goes into detail with how to define variants of the ordinary and partial derivative based on the package's internal commands, as mentioned earlier. The \mypackage{} package provides a \latex2 way of defining the derivatives. Thought it is preferable to define variants of the ordinary derivative over the partial derivative, unless one needs more than one variable of differentiation and access to the mixed order.
@@ -1985,7 +1996,7 @@
 	
 	\begin{function}*{\NewOdvVariant, \RenewOdvVariant, \ProvideOdvVariant, \DeclareOdvVariant}
 		\begin{syntax}
-			\meta{control-sequence}, \meta{inf-d}, \oarg{key=value}
+			\meta{control-sequence}, \marg{infinitesimal}, \oarg{key=value}
 		\end{syntax}
 		This family of commands are used to define a variant of the ordinary derivative with the macro name \arg{1}. Moreover, the new derivative will use \arg{2} as its infinitesimal and inherit the package's default settings given in \cref{ssec:odv_options}, but they may be overwritten with \arg{3}. The difference between them, is as follows:
 		\begin{itemize}
@@ -2000,7 +2011,7 @@
 		\end{argument}
 		
 		\begin{argument}{2}
-			While the second argument makes the derivative \arg{1} use \arg{2} as the infinitesimal, like \enquote{d} is used as the infinitesimal in the ordinary derivative \macro{\odv}. The argument must be a \emph{single token} thought this is subject to change, see \cref{consid:infd_single_token}.
+			While the second argument makes the derivative \arg{1} use \arg{2} as the infinitesimal, like \enquote{d} is used as the infinitesimal in the ordinary derivative \macro{\odv}.
 		\end{argument}
 		
 		\begin{argument}{3}
@@ -2012,7 +2023,7 @@
 	
 	\begin{function}*{\NewPdvVariant, \RenewPdvVariant, \ProvidePdvVariant, \DeclarePdvVariant}
 		\begin{syntax}
-			\meta{control-sequence}, \meta{inf-p}, \oarg{key=value}
+			\meta{control-sequence}, \marg{infinitesimal}, \oarg{key=value}
 		\end{syntax}
 		This family of commands are used to define a variant of the partial derivative with the macro name \arg{1}. Moreover, the new derivative will use \arg{2} as its infinitesimal and inherit the package's default options given in \cref{ssec:pdv_options}, but they may be overwritten with \arg{3}. The difference between them is as follows:
 		
@@ -2028,13 +2039,15 @@
 		\end{argument}
 		
 		\begin{argument}{2}
-			While the second argument makes the derivative \arg{1} use \arg{2} as the infinitesimal, like \enquote{$\partial$} is used as the infinitesimal in the partial derivative \macro{\pdv}. The argument must be a \emph{single token} thought this is subject to change, see \cref{consid:infd_single_token}.
+			While the second argument makes the derivative \arg{1} use \arg{2} as the infinitesimal, like \enquote{$\partial$} is used as the infinitesimal in the partial derivative \macro{\pdv}.
 		\end{argument}
 		
 		\begin{argument}{3}
 			The optional argument accepts its input as a comma-separated list of \emph{key=value} pairs, which overrides the package's default options for the keys given. Leaving out this argument, then the derivative will use the package's default settings.
 		\end{argument}
 	\end{function}
+	
+	
 	
 	
 	
@@ -2165,6 +2178,10 @@
 	
 	
 	
+	
+	
+	
+	
 	\clearpage
 	\section{Miscellaneous} 
 	
@@ -2199,8 +2216,12 @@
 	
 	
 	
+	
+	
+	
+	
 	\clearpage
-	\section{To do} 
+	\section{To do}\label{sec:todo}
 	
 	Entries marked with \cmark{} will be implemented in a future release specified in the entry. Entries marked with \xmark{} will not be implemented.
 	
@@ -2230,6 +2251,7 @@
 		%
 		\item With the above consideration, than it would only be natural to remove the mixed order and then have an option \keyval[index=false]{mixed-order}{\marg{mixed-order}}. Likewise, it should not be possible to be set with \macro[index=false]{\derivset} or in the definition of a new derivative. \label{consid:RemoveMixedOrder} \\
 		\answer{\cmark}{The mixed order argument will be removed due to the introduction of a key-value argument as mentioned above in the next release. The mixed order can be set with the knew key \texttt{m-ord=\meta{mixed-order}}.}
+		%
 		\item Currently \macro[index=false]{\derivset}'s optional argument \oarg{key=val}, when not given, sets the derivatives options to the package default settings. This should probably be changed to the options set in the definition of the derivative. \label{consid:DerivsetOptional} \\
 		\answer{\cmark}{I believe this would a nice change for the future, but I do not have the time to make the implementation for the next release.}
 		%
@@ -2237,11 +2259,12 @@
 		%
 		\item Should I add a key, possible a switch, that turn on/off the local behaviour \key[index=false]{misc-add-delims} and \key[index=false]{misc-remove-delims} inside derivative? \label{consid:add_remove_local}
 		% 
-		\item It was mentioned in \cref{sec:createvariants}, that the second argument of \cs{\ldots Variant} should be a single token, e.g. meaning that \macro[index=false]{\NewOdvVariant}[\narg{\cs{myvariant}},\narg{\cs{partial}\_\cs{mu}}] is not allowed but \macro[index=false]{\NewOdvVariant}[\narg{\cs{myvariant}},\narg{\{\cs{partial}\_\cs{mu}\}}] is. It can easily be change to accept a multi token input. \label{consid:infd_single_token} \\
-		\answer{\cmark}{This have already been changed in this release, since it is an unnecessary constraint.}
+		\item It was mentioned in \cref{sec:createvariants}, that the second argument of \cs{\ldots Variant} should be a single token, e.g. meaning that \macro[index=false]{\NewOdvVariant}[\narg{\cs{myvariant}},\narg{\cs{partial}\_\cs{mu}}] is not allowed but \macro[index=false]{\NewOdvVariant}[\narg{\cs{myvariant}},\narg{\{\cs{partial}\_\cs{mu}\}}] is. It can easily be change to accept a multi token input. \\
+		\answer{\cmark}{This have already been changed in version 0.95, since it is an unnecessary constraint.}
 		%
 		\item Should I add the option to \key[index=false]{sort-numerical}, so that it is treated as a symbolic term instead of a numerical term? \label{consid:sort_numerical}
 		\\ \answer{\cmark}{Yes. Yes I should. This feature will be added in the next release.}
+		%
 		\item Should I add a sorting algorithm that order the terms according to their number (including sign)? \label{consid:sort_number}
 		\\ \answer{\cmark}{Yes. Yes I should. This feature will be added in the next release.}
 		%
@@ -2254,12 +2277,18 @@
 	
 	
 	
+	
+	
+	
 	\clearpage
 	\addsec{Index}
 	Numbers in bold  refer to the page where the entry is defined.
 	
 	\printindex[option]
 	\printindex[macro]
+	
+	
+	
 	
 	
 	
@@ -2274,8 +2303,8 @@
 		\end{change}
 		\bigskip
 		\begin{change}[version = 0.95, date = 2019-09-18, beta = true]
-			\item \emph{Please ignore this version, since it contained the \pkg{.sty} and \pkg{.pdf} files for version} \texttt{0.9} \texttt{:(}.
-			\item Second beta release of the package.
+			\item \emph{Please ignore this version, since it contained the wrong \pkg{.sty} and \pkg{.pdf} files} \texttt{:(}.
+			%\item Second beta release of the package.
 			\item Removed the single token restriction of the infinitesimal since it made no sense.
 			\item Fixed the documentation errors and typos.
 			\item Minor fixes to the code.
@@ -2284,6 +2313,11 @@
 			\item Contains the correct \pkg{.sty} and \pkg{.pdf} files \texttt{:)}.
 			\item One minor code fix.
 		\end{change}
+		\begin{change}[version = 0.96, date = 2019-12-22, beta = true]
+			\item Fixed the double superscript issue for higher order derivative when the variable contained a superscript.
+		\end{change}
+		\begin{change}[version = 0.97, date = 2020-02-03, beta = true]
+			\item Fixed the argument specifier of {\small\verb|\__deriv_scale_big:nnnn|} when it was used (it was used with \texttt{:nnnm}).
+		\end{change}
 	\end{changelog}
-	
 \end{document}

@@ -1,5 +1,5 @@
 % derivative.sty
-% Copyright 2019 Simon Jensen
+% Copyright 2019-2020 Simon Jensen
 % 
 % This work may be distributed and/or modified under the
 % conditions of the LaTeX Project Public License, either version 1.3
@@ -16,7 +16,7 @@
 \NeedsTeXFormat{LaTeX2e}
 
 \RequirePackage{xparse}[2018/05/09]
-\ProvidesExplPackage{derivative}{2019/09/21}{0.95b}{Nice and easy derivatives}
+\ProvidesExplPackage{derivative}{2020/02/03}{0.97}{Nice and easy derivatives}
 
 %%%%%  Useful conditionals  %%%%%
 
@@ -845,7 +845,27 @@
 		\bool_set_false:c { l__deriv_#1_mics_var_bool }
 		\__deriv_add_delims:nnn {#1} { var } {#2}
 	}
-	{ #2 }
+	{  \__deriv_handle_double_sp:n {#2}  }
+}
+% variable
+\cs_new:Npn \__deriv_handle_double_sp:n #1
+{
+	\tl_set:Nn \l_tmpa_tl {#1}
+	\str_set:Nn \l_tmpa_str {#1}
+	
+	\str_if_in:NnTF \l_tmpa_str { ^ }
+	{
+		\exp_args:Nf
+		\str_if_eq:nnTF { \tl_item:Nn \l_tmpa_tl {-2} } { ^ }
+		{ {#1} }
+		{
+			\exp_args:Nf
+			\str_if_eq:nnTF { \tl_item:Nn \l_tmpa_tl {-4} } { ^ }
+			{ {#1} }
+			{  #1  }
+		}
+	}
+	{#1}
 }
 % dv , code-for-fraction
 \cs_new:Npn \__deriv_fraction:nn #1 #2
@@ -904,7 +924,7 @@
 		{ auto } { \__deriv_scale_auto:Nnnn \__deriv_auto_left:n {#1} {#2} { 1 } }
 		{ none } { \__deriv_scale_none:nnn {#1} {#2} { 1 } }
 	}
-	{ \__deriv_scale_big:nnnm {#1} {#2} { 1 } { l } }
+	{ \__deriv_scale_big:nnnn {#1} {#2} { 1 } { l } }
 }
 % dv , name
 \cs_new:Npn \__deriv_scale_right:nn #1 #2
@@ -914,7 +934,7 @@
 		{ auto } { \__deriv_scale_auto:Nnnn \__deriv_auto_right:n {#1} {#2} { 2 } }
 		{ none } { \__deriv_scale_none:nnn {#1} {#2} { 2 } }
 	}
-	{ \__deriv_scale_big:nnnm {#1} {#2} { 2 } { r } }
+	{ \__deriv_scale_big:nnnn {#1} {#2} { 2 } { r } }
 }
 % left/right , dv , name, number
 \cs_new:Npn \__deriv_scale_auto:Nnnn #1 #2 #3 #4
@@ -1326,4 +1346,6 @@
 }
 \derivset{all}
 
+
 \endinput
+
