@@ -1,0 +1,142 @@
+% derivative.tex
+% Copyright 2019 Simon Jensen
+% 
+% This work may be distributed and/or modified under the
+% conditions of the LaTeX Project Public License, either version 1.3
+% of this license or (at your option) any later version.
+% The latest version of this license is in
+% http://www.latex-project.org/lppl.txt
+% and version 1.3 or later is part of all distributions of LaTeX
+% version 2005/12/01 or later.
+% 
+% This work has the LPPL maintenance status `maintained'.
+% 
+% The Current Maintainer of this work is Simon Jensen.
+
+\NeedsTeXFormat{LaTeX2e}
+
+\documentclass[final,british,10pt]{scrartcl}
+	\reversemarginpar
+\RequirePackage{polyglossia}
+	\setmainlanguage[variant=british]{english}
+\RequirePackage[style=english,english=british]{csquotes}
+\RequirePackage[final,babel,auto]{microtype}
+\RequirePackage{xcolor}
+	%\definecolor{RoyalGray}{RGB}{127, 144, 158}
+	%\definecolor{RoyalDarkGray}{RGB}{78, 93, 104}
+	%\definecolor{RoyalLightGray}{RGB}{250, 250, 250}
+	%\definecolor{RoyalRed}{RGB}{157, 16, 45}
+	%\definecolor{RoyalBlue}{RGB}{0, 35, 102}
+	%\definecolor{RoyalGreen}{RGB}{32, 77, 2}
+
+	\definecolor{RoyalGray}{RGB}{75, 75, 75}
+	\definecolor{RoyalDarkGray}{RGB}{225, 225, 225}
+	\definecolor{RoyalLightGray}{RGB}{30, 30, 30}
+	\definecolor{RoyalRed}{RGB}{255, 177, 151} % 207, 102, 121
+	\definecolor{RoyalBlue}{RGB}{187, 134, 252} % 55, 185, 255
+	\definecolor{RoyalGreen}{RGB}{3, 218, 198} % 52, 177, 20
+	\definecolor{RoyalPageCoulor}{RGB}{18, 18, 18} % 30, 30, 30
+	\definecolor{RoyalTextCoulor}{RGB}{225, 225, 225}
+	\pagecolor{RoyalPageCoulor}
+	\color{RoyalTextCoulor}
+
+\RequirePackage{amsmath, amsthm}
+	\allowdisplaybreaks
+	\theoremstyle{remark}
+	\newtheorem*{note}{Note}
+\RequirePackage{unicode-math}
+
+\RequirePackage{booktabs}
+\RequirePackage{tabularx}
+\RequirePackage{siunitx}
+	\sisetup{locale = UK}
+\RequirePackage{hologo}
+\RequirePackage{enumitem}
+\RequirePackage{listings}
+\RequirePackage{imakeidx}
+
+\RequirePackage{mleftright}
+\RequirePackage{xfrac}
+
+\RequirePackage[unicode]{hyperref}
+\RequirePackage[nameinlink]{cleveref}
+
+\RequirePackage{indstillinger}
+\RequirePackage{kommandoer}
+
+\Pakkenavn{derivative}
+\Titel{The \pakkenavn{} package}
+\Forfatter{Simon Jensen}
+\Email{sjelatex@gmail.com}
+\Dato{20??/??/??}
+\Version{1.0}
+
+\RequirePackage{derivative}[\dato]
+	\derivset{all}[scale-auto = mleftmright]
+
+\hypersetup
+{
+	final = true,
+	bookmarksnumbered = true,
+	colorlinks = true,
+	linkcolor = RoyalRed,
+	urlcolor = RoyalBlue,
+	pdfauthor = \forfatter,
+	pdftitle = \titel,
+	pdfencoding = unicode
+}
+
+\listfiles
+
+\setlength{\marginparwidth}{126pt} % 74.68849pt
+
+%\makeindex[name = option, title = Index of Options, intoc=true]
+%\makeindex[name = macro, title = Index of Commands, intoc=true]
+
+%\indexsetup{level = \subsection*, noclearpage = true, toclevel = subsection}
+
+%\def\indexspace{}
+
+%\directlua{
+%	pdf.setmajorversion(2)
+%	pdf.setminorversion(0)
+%}
+
+\begin{document}
+	
+	\forside
+	
+	\clearpage
+	\tableofcontents
+	
+	\clearpage
+	\input{Indledning}
+	
+	\clearpage
+	\input{Saedvanlig_afledte}
+	
+	\clearpage
+	\input{Delvis_afledte}
+	
+	\clearpage
+	\input{Pakke_indstillinger}
+	
+	\clearpage
+	\input{Definition_af_varianter}
+	
+	\clearpage
+	\input{Sorteringsalgoritmer}
+	
+	\clearpage
+	\input{Diverse}
+	
+	\clearpage
+	\input{Mangler}
+	
+%	\clearpage
+%	\input{Indeksering}
+	
+	\clearpage
+	\input{Historie}
+	
+\end{document}
