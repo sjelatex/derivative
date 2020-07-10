@@ -2,3 +2,6 @@
  headings_flag 1
  heading_prefix "\\texttt\{\\color\{RoyalBlue\}"
  heading_suffix "\}\\nopagebreak\n"
+ item_0 "\n \\item \\begingroup \\small \\ttfamily \\upshape "
+ delim_0 "\\endgroup, "
+ group_skip "\n\n  \\bigskip\n"
