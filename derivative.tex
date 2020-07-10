@@ -46,8 +46,6 @@
 
 \RequirePackage{mleftright}
 \RequirePackage{xfrac}
-\RequirePackage{derivative}
-	\derivset{all}[scale-auto = mleftmright]
 
 \RequirePackage[unicode]{hyperref}
 \RequirePackage[nameinlink]{cleveref}
@@ -57,17 +55,17 @@
 
 \tl_new:N \pakkenavn
 \tl_new:N \titel
-\tl_new:N \g_deriv_email
+\tl_new:N \email
 \tl_new:N \forfatter
-\tl_new:N \g_deriv_dato
-\tl_new:N \g_deriv_version
+\tl_new:N \dato
+\tl_new:N \version
 
 \NewDocumentCommand{\Pakkenavn}{ m }{ \tl_gset:Nf \pakkenavn { \tl_trim_spaces:n { #1 } } }
 \NewDocumentCommand{\Titel}    { m }{ \tl_gset:Nf \titel     { \tl_trim_spaces:n { #1 } } }
 \NewDocumentCommand{\Forfatter}{ m }{ \tl_gset:Nf \forfatter { \tl_trim_spaces:n { #1 } } }
-\NewDocumentCommand{\Email}    { m }{ \tl_gset:Nf \g_deriv_email    { \tl_trim_spaces:n { #1 } } }
-\NewDocumentCommand{\Dato}     { m }{ \tl_gset:Nf \g_deriv_dato     { \tl_trim_spaces:n { #1 } } }
-\NewDocumentCommand{\Version}  { m }{ \tl_gset:Nf \g_deriv_version  { \tl_trim_spaces:n { #1 } } }
+\NewDocumentCommand{\Email}    { m }{ \tl_gset:Nf \email { \tl_trim_spaces:n { #1 } } }
+\NewDocumentCommand{\Dato}     { m }{ \tl_gset:Nf \dato  { \tl_trim_spaces:n { #1 } } }
+\NewDocumentCommand{\Version}  { m }{ \tl_gset:Nf \version  { \tl_trim_spaces:n { #1 } } }
 
 \NewDocumentCommand{\mypackage}{ } {  \pkg{\pakkenavn}  }
 
@@ -90,14 +88,14 @@
 		\centering
 		\textsl{Written~by:} \par
 		{ \color{RoyalRed} \forfatter \par }
-		{ \color{RoyalRed} \g_deriv_email \par }
+		{ \color{RoyalRed} \email \par }
 	\end{minipage}
 	\hfill
 	\begin{minipage}[t]{0.5\textwidth}
 		\centering
 		\textsl{Released:} \par
-		{ \color{RoyalRed} \g_deriv_version \par }
-		{ \color{RoyalRed} \g_deriv_dato \par }
+		{ \color{RoyalRed} v\version \par }
+		{ \color{RoyalRed}  \dato \par }
 	\end{minipage}
 	
 	\par \vspace{20mm} \noindent
@@ -1085,8 +1083,11 @@
 \Titel{The \pakkenavn{} package}
 \Forfatter{Simon Jensen}
 \Email{sjelatex@gmail.com}
-\Dato{2019-09-20}
-\Version{v0.95}
+\Dato{2019/09/21}
+\Version{0.95b}
+
+\RequirePackage{derivative}[\dato]
+\derivset{all}[scale-auto = mleftmright]
 
 \hypersetup
 {
@@ -2273,10 +2274,15 @@
 		\end{change}
 		\bigskip
 		\begin{change}[version = 0.95, date = 2019-09-18, beta = true]
+			\item \emph{Please ignore this version, since it contained the \pkg{.sty} and \pkg{.pdf} files for version} \texttt{0.9} \texttt{:(}.
 			\item Second beta release of the package.
 			\item Removed the single token restriction of the infinitesimal since it made no sense.
 			\item Fixed the documentation errors and typos.
 			\item Minor fixes to the code.
+		\end{change}
+		\begin{change}[version = 0.95b, date = 2019-09-21, beta = true]
+			\item Contains the correct \pkg{.sty} and \pkg{.pdf} files \texttt{:)}.
+			\item One minor code fix.
 		\end{change}
 	\end{changelog}
 	
