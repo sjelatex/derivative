@@ -16,7 +16,7 @@
 \NeedsTeXFormat{LaTeX2e}
 
 \RequirePackage{xparse}[2018/05/09]
-\ProvidesExplPackage{derivative}{2020/02/03}{0.97}{Nice and easy derivatives}
+\ProvidesExplPackage{derivative}{2020/07/20}{0.98}{Nice and easy derivatives}
 
 %%%%%  Useful conditionals  %%%%%
 
@@ -451,7 +451,8 @@
 % dv , new/delare/renew/provide , macro , inf
 \cs_new_protected:Npn \deriv_d_define:nnnn #1 #2 #3 #4
 {
-	\use:c { #2 DocumentCommand }{#3}{ s o m t/ m !e{\sb^} }
+	\exp_args:Nnnx
+	\use:c { #2 DocumentCommand }{#3}{ s o m t/ m !e{\char_generate:nn {`_}{8}^} }
 	{
 	\group_begin:
 		\exp_args:Nnc \bool_xor:nnTF {##4} { l__deriv_#1_switch_slash_bool }
@@ -484,7 +485,8 @@
 % dv , new/delare/renew/provide , macro , inf
 \cs_new_protected:Npn \deriv_p_define:nnnn #1 #2 #3 #4
 {
-	\use:c { #2 DocumentCommand }{#3}{ s o o m t/ m !e{\sb^} }
+	\exp_args:Nnnx
+	\use:c { #2 DocumentCommand }{#3}{ s o o m t/ m !e{\char_generate:nn {`_}{8}^} }
 	{
 	\group_begin:
 		\exp_args:Nnc \bool_xor:nnTF {##5} { l__deriv_#1_switch_slash_bool }

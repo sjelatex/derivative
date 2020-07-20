@@ -1082,8 +1082,8 @@
 \Titel{The \pakkenavn{} package}
 \Forfatter{Simon Jensen}
 \Email{sjelatex@gmail.com}
-\Dato{2020/02/03}
-\Version{0.97}
+\Dato{2020/07/20}
+\Version{0.98}
 
 \RequirePackage{derivative}[\dato]
 	\derivset{all}[scale-auto = mleftmright]
@@ -2063,14 +2063,14 @@
 		\item The sorting by \val{abs} separates the terms by their absolute value, where the terms are ordered in a descending manner according to their absolute value. Using the option \keyval{sort-abs-reverse}{true}, then the terms are ordered in an ascending manner instead.
 	\end{itemize}
 	
-	When using the option \keyval{sort-method}{\{...\}}, the number of algorithms determines the number of layers e.g. \keyval{sort-method}{sign,symbol} is a sorting method with two layers, where the algorithms \val{sign} and \val{symbol} are applied in layer \num{1} and layer \num{2}, respectively. It should be understood as that the \val{sign} algorithm splits the terms into two groups, one with positive terms and one with negative terms. Then the \val{symbol} algorithm will order the terms within each groups according to the terms symbolic length. The mixed order is then formed by combining these two groups such that the positive terms comes first.
+	When using the option \keyval{sort-method}{\{...\}}, the number of algorithms determines the number of layers e.g. \keyval{sort-method}{\{sign,symbol\}} is a sorting method with two layers, where the algorithms \val{sign} and \val{symbol} are applied in layer \num{1} and layer \num{2}, respectively. It should be understood as that the \val{sign} algorithm splits the terms into two groups, one with positive terms and one with negative terms. Then the \val{symbol} algorithm will order the terms within each groups according to the terms symbolic length. The mixed order is then formed by combining these two groups such that the positive terms comes first.
 	
 	The next subsubsection is dedicated to give some examples of how the algorithms in this package sorts the mixed order.
 	
 	\subsubsection{Examples}
 	The examples are constructed of a partial derivative with the comma separated list of orders given by \texttt{[3a-3hh-2b, 4c+4gg+2ff, -5d-5ee]} and a close up view of the mixed order. Square brackets are used to indicate grouping of terms and the text below a group refers to the algorithm applied. Here the words positive and negative, long and short, and big and low refers to the \val{sign}, \val{symbol}, and \val{abs} algorithms, respectively. A row of square brackets represents a layer.
 	
-	The packages default sorting method is \keyval{sort-method}{sign,symbol,abs}, which is used below. The \val{sign} algorithm separate the positive and negative terms in the first layer. While in the second layer, the terms are separated by symbol length etc.
+	The packages default sorting method is \keyval{sort-method}{\{sign,symbol,abs\}}, which is used below. The \val{sign} algorithm separate the positive and negative terms in the first layer. While in the second layer, the terms are separated by symbol length etc.
 	\begin{equation*}
 	\derivset{\pdv}[sort-method = {sign,symbol,abs}]
 	\pdv[3a-3hh-2b, 4c+4gg+2ff, -5d-5ee]{f}{x,y,z}
@@ -2097,7 +2097,7 @@
 		}{short}
 	}{negative}
 	\end{equation*}
-	as expected. Interchanging \val{sign} and \val{symbol} algorithms from the previous example i.e \keyval{sort-method}{symbol, sign, abs}, then the \val{symbol} \cal{sign} algorithms are now applied in the first and second layer, respectively. The result is shown below
+	as expected. Interchanging \val{sign} and \val{symbol} algorithms from the previous example i.e \keyval{sort-method}{\{symbol,sign,abs\}}, then the \val{symbol} \cal{sign} algorithms are now applied in the first and second layer, respectively. The result is shown below
 	\begin{equation*}
 	\derivset{\pdv}[sort-method = {symbol,sign,abs}]
 	\pdv[3a-3hh-2b, 4c+4gg+2ff, -5d-5ee]{f}{x,y,z}
@@ -2126,7 +2126,7 @@
 	\end{equation*}
 	where a clear difference is seen between the above two examples.
 	
-	The above two examples used 3-layer sorting methods but as mentioned earlier, the sorting method can also be constructed with one and two algorithms i.e. 1-layer and 2-layer sorting methods. A sorting method with two layers could be constructed as \keyval{sort-method}{sign,symbol} and with it, the terms are ordered by sign and then symbolic length. In this case, there is not a third layer. Instead, the terms \enquote{appear randomly} according to their absolute value as shown below
+	The above two examples used 3-layer sorting methods but as mentioned earlier, the sorting method can also be constructed with one and two algorithms i.e. 1-layer and 2-layer sorting methods. A sorting method with two layers could be constructed as \keyval{sort-method}{\{sign,symbol\}} and with it, the terms are ordered by sign and then symbolic length. In this case, there is not a third layer. Instead, the terms \enquote{appear randomly} according to their absolute value as shown below
 	\begin{equation*}
 	\derivset{\pdv}[sort-method = {sign,symbol}]
 	\pdv[3a-3hh-2b, 4c+4gg+2ff, -5d-5ee]{f}{x,y,z}
@@ -2223,7 +2223,7 @@
 	\clearpage
 	\section{To do}\label{sec:todo}
 	
-	Entries marked with \cmark{} will be implemented in a future release specified in the entry. Entries marked with \xmark{} will not be implemented.
+	Entries marked with \cmark{} will be implemented in a future release. Entries marked with \xmark{} will not be implemented.
 	
 	\subsection{Future implementation}
 	The list describes what \emph{will be added} to the package in a later release.
@@ -2247,10 +2247,10 @@
 			%
 			\item Such an option should not be possible to be set with \macro[index=false]{\derivset} or in the definition of a new derivative (or maybe if one really needs a lot of higher order derivative).
 		\end{itemize}
-		\answer{\cmark}{I truly believe this is the right way forward and is coming in the next release. More features can easily be added in a key-value style. The order argument will be replaced with a key-value argument and a order key introduced; \texttt{ord=\meta{order}}.}
+		\answer{\cmark}{I truly believe this is the right way forward and is coming in version 1.0. More features can easily be added in a key-value style. The order argument will be replaced with a key-value argument and a order key introduced; \texttt{ord=\meta{order}}.}
 		%
 		\item With the above consideration, than it would only be natural to remove the mixed order and then have an option \keyval[index=false]{mixed-order}{\marg{mixed-order}}. Likewise, it should not be possible to be set with \macro[index=false]{\derivset} or in the definition of a new derivative. \label{consid:RemoveMixedOrder} \\
-		\answer{\cmark}{The mixed order argument will be removed due to the introduction of a key-value argument as mentioned above in the next release. The mixed order can be set with the knew key \texttt{m-ord=\meta{mixed-order}}.}
+		\answer{\cmark}{The mixed order argument will be removed due to the introduction of a key-value argument as mentioned above in version 1.0. The mixed order can be set with the knew key \texttt{m-ord=\meta{mixed-order}}.}
 		%
 		\item Currently \macro[index=false]{\derivset}'s optional argument \oarg{key=val}, when not given, sets the derivatives options to the package default settings. This should probably be changed to the options set in the definition of the derivative. \label{consid:DerivsetOptional} \\
 		\answer{\cmark}{I believe this would a nice change for the future, but I do not have the time to make the implementation for the next release.}
@@ -2263,13 +2263,13 @@
 		\answer{\cmark}{This have already been changed in version 0.95, since it is an unnecessary constraint.}
 		%
 		\item Should I add the option to \key[index=false]{sort-numerical}, so that it is treated as a symbolic term instead of a numerical term? \label{consid:sort_numerical}
-		\\ \answer{\cmark}{Yes. Yes I should. This feature will be added in the next release.}
+		\\ \answer{\cmark}{Yes. Yes I should. This feature will be added in version 1.0.}
 		%
 		\item Should I add a sorting algorithm that order the terms according to their number (including sign)? \label{consid:sort_number}
-		\\ \answer{\cmark}{Yes. Yes I should. This feature will be added in the next release.}
+		\\ \answer{\cmark}{Yes. Yes I should. This feature will be added in version 1.0.}
 		%
 		\item I am considering making the optional argument of \macro[index=false]{\slashfrac} into a \oarg{key=value} argument with something like \keyval[index=false]{scale}{\marg{scaling}}. \label{consid:slashfrac_opt} \\
-		\answer{\cmark}{I want an key-value implementation like this in the future, but it will not be added it the next release.}
+		\answer{\cmark}{I want an key-value implementation like this in the future, but it will not be added it version 1.0.}
 		%
 		\item Should the default scaling for \macro[index=false]{\slashfrac} be \val{auto} or \val{none}? Or should it be possible to set it with something like \cs{slashfracset}\oarg{key=value}? \label{consid:slashfrac_def_scale} \\
 		\answer{\xmark}{The package default should be \val{auto}, but it will be possible to change it, when the key-value is implemented or \macro[index=false]{\slashfrac}.}
@@ -2316,8 +2316,13 @@
 		\begin{change}[version = 0.96, date = 2019-12-22, beta = true]
 			\item Fixed the double superscript issue for higher order derivative when the variable contained a superscript.
 		\end{change}
+		\smallskip
 		\begin{change}[version = 0.97, date = 2020-02-03, beta = true]
 			\item Fixed the argument specifier of {\small\verb|\__deriv_scale_big:nnnn|} when it was used (it was used with \texttt{:nnnm}).
+		\end{change}
+		\smallskip
+		\begin{change}[version = 0.98, date = 2020-07-20, beta = true]
+			\item Fixed a bug concerning the subscript argument due to recent changes to the \pkg{xparse} package dated 2020-05-14 (the fix works with earlier versions of xparse as well).
 		\end{change}
 	\end{changelog}
 \end{document}

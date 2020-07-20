@@ -1,4 +1,4 @@
-## README for derivative package v0.97 dated 2020-02-03
+## README for derivative package v0.98 dated 2020-07-20
 
 The package provides a set of commands `\NewOdvVariant`, `\NewPdvVariant` etc. that can be used to define a variant of a derivative. The package have already defined several derivatives:
 
