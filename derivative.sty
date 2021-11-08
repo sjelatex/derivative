@@ -15,10 +15,57 @@
 
 \NeedsTeXFormat{LaTeX2e}
 
-\RequirePackage{xparse}[2018/05/09]
-\ProvidesExplPackage{derivative}{2021/05/28}{1.01}{Nice and easy derivatives and differentials for LaTeX}
+\RequirePackage{expl3,xparse}[2018/05/09]
+\RequirePackage{l3keys2e}
+\ProvidesExplPackage{derivative}{2021/06/03}{1.1}{Nice and easy derivatives and differentials for LaTeX}
+
+\bool_new:N \l__deriv_pkg_italic_bool
+\bool_new:N \l__deriv_pkg_upright_bool
+
+\keys_define:nn { deriv/pkg }
+{
+	italic .choice:,
+	italic .default:n = { true },
+	italic / true .code:n = 
+		{
+			\bool_set_true:N  \l__deriv_pkg_italic_bool
+			\bool_set_false:N \l__deriv_pkg_upright_bool
+		},
+	italic / false .code:n =
+		{
+			\bool_set_false:N \l__deriv_pkg_italic_bool
+			\bool_set_true:N  \l__deriv_pkg_upright_bool
+		},
+	italic / unknown .code:n =
+		{ \msg_error:nnx { deriv } { boolean-values-only } \l_keys_key_str },
+
+	upright .choice:,
+	upright .default:n = { true },
+	upright / true .code:n = 
+		{
+			\bool_set_true:N  \l__deriv_pkg_upright_bool
+			\bool_set_false:N \l__deriv_pkg_italic_bool
+		},
+	upright / false .code:n =
+		{
+			\bool_set_false:N \l__deriv_pkg_upright_bool
+			\bool_set_true:N  \l__deriv_pkg_italic_bool
+		},
+	upright / unknown .code:n =
+		{ \msg_error:nnx { deriv } { boolean-values-only } \l_keys_key_str },
+	upright .initial:n = true,
+}
+
+\ProcessKeysPackageOptions{ deriv/pkg }
 
 %%%%%  Useful conditionals  %%%%%
+
+\prg_new_conditional:Npnn \__deriv_if_pkg:n #1 { p, TF }
+{
+	\@ifpackageloaded{unicode-math}
+	{ \prg_return_true:  }
+	{ \prg_return_false: }
+}
 
 \prg_new_conditional:Npnn \__deriv_if_novalue:n #1 { T , F , TF }
 {
@@ -86,7 +133,7 @@
 \seq_new:N \l__deriv_tmp_keys_seq
 \tl_new:N \l__deriv_tmp_keys_tl
 
-%%%%%  Variables: infinisimal  %%%%%
+%%%%%  Variables: differential  %%%%%
 
 \seq_new:N \l__deriv_i_var_seq
 \seq_new:N \l__deriv_i_orders_seq
@@ -213,6 +260,7 @@
 
 %%%%%%  Key-val for all  %%%%%%
 
+\prop_new:N \l__deriv_all_all_user_keys_prop
 \prop_const_from_keyval:Nn \c__deriv_all_pkg_keys_prop
 { scale-auto = leftright }
 
@@ -228,8 +276,7 @@
 	{
 		\cs_set_nopar:Npn \__deriv_auto_left:n  { \mleft  }
 		\cs_set_nopar:Npn \__deriv_auto_right:n { \mright }
-	},
-	scale-auto .default:n = { leftright }
+	}
 }
 
 %%%%%%  Key-val: derivatives  %%%%%%
@@ -275,8 +322,6 @@
 		fun  .bool_set:c = { l__deriv_dv_#1_misc_fun_bool },
 		frac .bool_set:c = { l__deriv_dv_#1_misc_frac_bool },
 		var  .clist_set:c = { l__deriv_dv_#1_misc_var_clist },
-		%fun  .default:n = {true},
-		%frac .default:n = {true},
 		var  .default:n = {all},
 		
 		order .clist_set:c = { l__deriv_dv_#1_misc_order_clist },
@@ -1271,7 +1316,7 @@
 		\deriv_dv_define:NVn \RenewDocumentCommand \l__deriv_cs_name_tl {#1}
 	}
 	{
-		\msg_error:nnxx { deriv } { command-already-defined }
+		\msg_error:nnxx { deriv } { command-not-defined }
 		{ \token_to_str:N #1               }
 		{ \token_to_str:N \RenewDerivative }
 	}
@@ -1415,40 +1460,56 @@
 
 \msg_new:nnnn { deriv } { command-not-defined }
 { Command~'#1'~not~yet~defined! }
-{ You~have~used~#2~with~a~derivative~that~was~never~defined. }
+{ You~have~used~#2~with~a~command~that~was~never~defined. }
+
+\msg_new:nnnn { deriv } { boolean-values-only }
+{ The~key~'#1'~accepts~boolean~values~only. }
+{ The~key~'#1'~only~accepts~the~values~'true'~and~'false'. }
+
+\msg_new:nnnn { deriv } { derivative-option-not-defined }
+{ Derivative option~'#1'~not~yet~defined! }
+{ You~have~used~#2~with~a~derivative~option~that~was~never~defined. }
+
+\msg_new:nnnn { deriv } { differential-option-not-defined }
+{ Differential option~'#1'~not~yet~defined! }
+{ You~have~used~#2~with~a~differential~option~that~was~never~defined. }
 
 %%%%%  Declaring derivatives  %%%%%
 
-\derivset{all}
-\bool_lazy_or:nnTF { \sys_if_engine_luatex_p: } { \sys_if_engine_xetex_p: }
+\@ifpackageloaded{mleftright}
+{ \derivset{all}[scale-auto = mleftmright] }
+{ \derivset{all}[scale-auto = leftright]   }
+
+\cs_new_protected:Npn \deriv_define_legacy_italic_cs:
 {
-	\DeclareDerivative{\odv}{\symup{d}}
-	\DeclareDerivative{\mdv}{\symup{D}}
-	\DeclareDerivative{\fdv}{\delta}
-	\DeclareDerivative{\adv}{\Delta}
-	\DeclareDerivative{\jdv}{\partial}[fun=true, var=1]
-	\DeclareDerivative{\pdv}{\partial}[style-var=multiple, sep-inf-ord=1, delims-eval=(), delims-eval-/=()]
-	
-	\DeclareDifferential{\odif}{\symup{d}}
-	\DeclareDifferential{\mdif}{\symup{D}}[style-notation=single, style-notation-*=mixed]
-	\DeclareDifferential{\fdif}{\delta}
-	\DeclareDifferential{\adif}{\Delta}
-	\DeclareDifferential{\pdif}{\partial}[style-notation=single, style-notation-*=mixed]
+	\DeclareDerivative{\odv}{\mathnormal{d}}
+	\DeclareDerivative{\mdv}{\mathnormal{D}}
+	\DeclareDifferential{\odif}{\mathnormal{d}}
+	\DeclareDifferential{\mdif}{\mathnormal{D}}[style-notation=single, style-notation-*=mixed]
 }
+
+\cs_new_protected:Npn \deriv_define_legacy_upright_cs:
 {
 	\DeclareDerivative{\odv}{\mathrm{d}}
 	\DeclareDerivative{\mdv}{\mathrm{D}}
-	\DeclareDerivative{\fdv}{\delta}
-	\DeclareDerivative{\adv}{\Delta}
-	\DeclareDerivative{\jdv}{\partial}[fun=true, var=1]
-	\DeclareDerivative{\pdv}{\partial}[style-var=multiple, sep-inf-ord=1, delims-eval=(), delims-eval-/=()]
-	
 	\DeclareDifferential{\odif}{\mathrm{d}}
 	\DeclareDifferential{\mdif}{\mathrm{D}}[style-notation=single, style-notation-*=mixed]
-	\DeclareDifferential{\fdif}{\delta}
-	\DeclareDifferential{\adif}{\Delta}
-	\DeclareDifferential{\pdif}{\partial}[style-notation=single, style-notation-*=mixed]
 }
+
+\__deriv_case:n
+{
+	{ \l__deriv_pkg_italic_bool  } { \deriv_define_legacy_italic_cs:  }
+	{ \l__deriv_pkg_upright_bool } { \deriv_define_legacy_upright_cs: }
+}
+
+\DeclareDerivative{\fdv}{\delta}
+\DeclareDerivative{\adv}{\Delta}
+\DeclareDerivative{\jdv}{\partial}[fun=true, var=1]
+\DeclareDerivative{\pdv}{\partial}[style-var=multiple, sep-inf-ord=1, delims-eval=(), delims-eval-/=()]
+
+\DeclareDifferential{\fdif}{\delta}
+\DeclareDifferential{\adif}{\Delta}
+\DeclareDifferential{\pdif}{\partial}[style-notation=single, style-notation-*=mixed]
 
 \endinput
 

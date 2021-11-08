@@ -38,6 +38,7 @@ indent_length "2"
 \documentclass[final,british,10pt]{scrartcl}
 	\reversemarginpar
 \RequirePackage[british]{babel}
+\RequirePackage{fontspec}
 %\RequirePackage{polyglossia}
 %	\setmainlanguage[variant=british]{english}
 \RequirePackage[style=english,english=british]{csquotes}
@@ -49,6 +50,17 @@ indent_length "2"
 	\definecolor{RoyalRed}{RGB}{157, 16, 45}
 	\definecolor{RoyalBlue}{RGB}{0, 35, 102}
 	\definecolor{RoyalGreen}{RGB}{32, 77, 2}
+
+%	\definecolor{RoyalGray}{RGB}{75, 75, 75}
+%	\definecolor{RoyalDarkGray}{RGB}{225, 225, 225}
+%	\definecolor{RoyalLightGray}{RGB}{30, 30, 30}
+%	\definecolor{RoyalRed}{RGB}{255, 177, 151} % 207, 102, 121
+%	\definecolor{RoyalBlue}{RGB}{187, 134, 252} % 55, 185, 255
+%	\definecolor{RoyalGreen}{RGB}{3, 218, 198} % 52, 177, 20
+%	\definecolor{RoyalPageCoulor}{RGB}{18, 18, 18} % 30, 30, 30
+%	\definecolor{RoyalTextCoulor}{RGB}{225, 225, 225}
+%	\pagecolor{RoyalPageCoulor}
+%	\color{RoyalTextCoulor}
 
 \RequirePackage{amsmath, amsthm}
 	\allowdisplaybreaks
@@ -382,6 +394,7 @@ indent_length "2"
 \cs_new_protected:Npn \mydoc_ch_end:
 {
 }
+
 
 \tl_new:N \l__mydoc_number_tl
 \tl_new:N \l_mydoc_index_item_tl
@@ -1305,17 +1318,16 @@ indent_length "2"
 {  \mydoc_cs_to_str:N #1 }
 
 \ExplSyntaxOff
-\makeatother
 
 \Pakkenavn{derivative}
 \Titel{The \pakkenavn{} package}
 \Forfatter{Simon Jensen}
 \Email{sjelatex@gmail.com}
-\Dato{2021/05/28}
-\Version{1.01}
+\Dato{2021/06/03}
+\Version{1.1}
 
-\RequirePackage{derivative}[\dato]
-	\derivset{all}[scale-auto = mleftmright]
+\RequirePackage[upright]{derivative}[\dato]
+%	\derivset{all}[scale-auto = mleftmright]
 
 \hypersetup
 {
@@ -1349,8 +1361,7 @@ indent_length "2"
 \begin{document}
 	
 	\forside{%
-	The \mypackage{} package provides a set of commands which makes writing ordinary and partial derivatives of arbitrary order in a straight forward manner. Additionally, this package provides a set of commands to define variants of the aforementioned derivatives. A set of optional arguments along with lots of package options allow for easy and great flexibility over the derivative's format, such as where the function is positioned, point of evaluation, and switching between fraction styles. Moreover, the mixed order of the partial derivative and variants hereof is automatically computed. This package is written in the \pkg{expl3} language and requires therefore the \LaTeX3 package bundles \pkg{l3kernel} and \pkg{l3package}. Additionally, the \pkg{mleftright} package is optional and provides the improved automatically scaling \cs{mleft} and \cs{mright}.%
-	}
+	The \mypackage{} package provides a set of commands which makes writing ordinary and partial derivatives of arbitrary order in a straight forward manner. Additionally, this package provides a set of commands to define variants of the aforementioned derivatives. A set of optional arguments along with lots of package options allow for easy and great flexibility over the derivative's format, such as where the function is positioned, point of evaluation, and switching between fraction styles. Moreover, the mixed order of the partial derivative and variants hereof is automatically computed. This package is written in the \pkg{expl3} language and requires therefore the \LaTeX3 package bundles \pkg{l3kernel} and \pkg{l3package}. Additionally, the \pkg{mleftright} package is optional and provides the improved automatically scaling \cs{mleft} and \cs{mright}.}
 	
 	\clearpage
 	\tableofcontents
@@ -1372,7 +1383,7 @@ indent_length "2"
 		The partial derivative \macro{1} is defined with a set of mandatory and optional arguments that either typeset specific parts or changing the style of the derivative. In this package, the partial derivative is defined with an italic partial differential $\partial$ as
 		
 		\begin{definition}
-			\DeclareDerivative{\pdv}{\partial}[style-var=multiple, sep-inf-ord=1,%\marginnote{\pdftex, \xetex, \luatex}%
+			\DeclareDerivative{\pdv}{\partial}[style-var=multiple, sep-inf-ord=1,
 			delims-eval=(), delims-eval-/=()]
 		\end{definition}
 		
@@ -1453,15 +1464,14 @@ indent_length "2"
 	\subsection{Other derivatives}
 	This package offers five other derivatives: Ordinary derivative \macro{\odv}, material derivative \macro{\mdv}, functional derivative \macro{\fdv}, the average rate of change \macro{\adv} and the Jacobian \macro{\jdv}. A unique feature of this package, is that you can define your own derivatives as described in \cref{ssec:defvar_dv}.
 	
-	\begin{function}{\odv}
+	\begin{function}{\odv}[updated=v1.1]
 		\begin{syntax}
 			\sarg, \oarg{keyval list}, \marg{function}, \targ{/}, \marg{variables}, \earg{\_, point\tsb{1}, \^, point\tsb{2}}
 		\end{syntax}
-		In this package, the ordinary derivative is defined with an upright lowercase d as
-		
+		In this package, the ordinary derivative is defined with an upright lowercase d if the package option \keyval{upright}{true} is used else it will use an italic lowercase d
 		\begin{definition}
-			\DeclareDerivative{\odv}{\mathrm{d}}%\marginnote{\pdftex}%
-			\DeclareDerivative{\odv}{\symup{d}}%\marginnote{\xetex, \luatex}%
+			\DeclareDerivative{\odv}{\mathrm{d}}%\marginnote{\keyval{upright}{true}}%
+			\DeclareDerivative{\odv}{\mathnormal{d}}%\marginnote{\keyval{italic}{true}}%
 		\end{definition}
 		because it is used by many nowadays books
 		\begin{equation*}
@@ -1470,15 +1480,15 @@ indent_length "2"
 		However it can always be changed with the \key{style-inf} key. 
 	\end{function}
 	
-	\begin{function}{\mdv}
+	\begin{function}{\mdv}[updated=v1.1]
 		\begin{syntax}
 			\sarg, \oarg{keyval list}, \marg{function}, \targ{/}, \marg{variables}, \earg{\_, point\tsb{1}, \^, point\tsb{2}}
 		\end{syntax}
-		The material derivative is used in some branches of physics e.g. thermodynamic, fluid dynamic etc. It is only natural for a physics student as me to define such a variant, that used an upright uppercase D. In this package, the material derivative is defined as
+		The material derivative is used in some branches of physics e.g. thermodynamic, fluid dynamic etc. It comes with an upright uppercase D when the package option \keyval{upright}{true} else it will use an italic uppercase D. In this package, the material derivative is defined as
 		
 		\begin{definition}
-			\DeclareDerivative{\mdv}{\mathrm{D}}%\marginnote{\pdftex}%
-			\DeclareDerivative{\mdv}{\symup{D}}%\marginnote{\xetex, \luatex}%
+			\DeclareDerivative{\mdv}{\mathrm{D}}%\marginnote{\keyval{upright}{true}}%
+			\DeclareDerivative{\mdv}{\mathnormal{D}}%\marginnote{\keyval{italic}{true}}%
 		\end{definition}
 		
 		\noindent In physics, the material derivative is defined by
@@ -1494,7 +1504,7 @@ indent_length "2"
 		The functional derivative is used in the calculus of variation and uses a lowercase delta. With the package's default settings, it will use an italic delta. In this package, the functional derivative is defined as
 		
 		\begin{definition}
-			\DeclareDerivative{\fdv}{\delta}%\marginnote{\pdftex, \xetex, \luatex}%
+			\DeclareDerivative{\fdv}{\delta}
 		\end{definition}
 		
 		\noindent In physics, it is for example used in the Lagrange equation or in the derivation of the Hartree-Fock equation
@@ -1512,7 +1522,7 @@ indent_length "2"
 		The average rate of change is defined to use an upright uppercase delta with the packages default settings. In this package, the average rate of change is defined as
 		
 		\begin{definition}
-			\DeclareDerivative{\adv}{\Delta}%\marginnote{\pdftex, \xetex, \luatex}%
+			\DeclareDerivative{\adv}{\Delta}
 		\end{definition}
 		
 		\noindent The average rate of change is used to determine the slope of a straight line
@@ -1528,7 +1538,7 @@ indent_length "2"
 		The Jacobian is defined to use an italic partial differential with the package's default settings. Also a pair of parentheses is automatically inserted around the function and variable. In this package, the Jacobian is defined as
 		
 		\begin{definition}
-			\DeclareDerivative{\jdv}{\partial}[fun=true, var=1]%\marginnote{\pdftex, \xetex, \luatex}%
+			\DeclareDerivative{\jdv}{\partial}[fun=true, var=1]
 		\end{definition}
 		
 		\noindent which gives
@@ -1542,15 +1552,15 @@ indent_length "2"
 	\clearpage
 	\section{Differentials}
 	
-	\begin{function}*{\odif}[new = v1.0]
+	\begin{function}*{\odif}[new = v1.0, updated=v1.1]
 		\begin{syntax}
 			\sarg, \oarg{keyval list}, \marg{variables}
 		\end{syntax}
-		The differential \macro{1} using an lowercase d is defined with a set of mandatory and optional arguments that either typeset specific parts or changing the style of the differential. It is defined as
+		The differential \macro{1} is defined with a set of mandatory and optional arguments that either typeset specific parts or changing the style of the differential. It is defined with an upright lowercase d when \keyval{upright}{true} else it will be defined with an italic lowercase d
 		
 		\begin{definition}
-			\DeclareDifferential{\odif}{\mathrm{d}}%\marginnote{\pdftex}%
-			\DeclareDifferential{\odif}{\symup{d}}%\marginnote{\xetex, \luatex}%
+			\DeclareDifferential{\odif}{\mathrm{d}}%\marginnote{\keyval{upright}{true}}%
+			\DeclareDifferential{\odif}{\mathnormal{d}}%\marginnote{\keyval{italic}{true}}%
 		\end{definition}
 		
 		\begin{argument}*{1}
@@ -1597,7 +1607,7 @@ indent_length "2"
 		
 		\begin{definition}
 			\DeclareDifferential{\pdif}{\partial}[style-notation=single,
-			style-notation-*=mixed]%\marginnote{\pdftex, \xetex, \luatex}%
+			style-notation-*=mixed]
 		\end{definition}
 		
 		\noindent The non-star and star version gives
@@ -1608,17 +1618,17 @@ indent_length "2"
 		respectively.
 	\end{function}
 	
-	\begin{function}{\mdif}
+	\begin{function}{\mdif}[updated=v1.1]
 		\begin{syntax}
 			\sarg, \oarg{keyval list}, \marg{variables}
 		\end{syntax}
-		Another commonly used shorthand notation for various derivatives is the differential with a uppercase D. In this package it is defined with a upright D as
+		Another commonly used shorthand notation for various derivatives is the differential with an uppercase D. In this package it is defined with a upright D when \keyval{upright}{true} else it is defined with an italic uppercase D
 		
 		\begin{definition}
 			\DeclareDifferential{\mdif}{\mathrm{D}}[style-notation=single,
-			style-notation-*=mixed]%\marginnote{\pdftex}%
-			\DeclareDifferential{\mdif}{\symup{D}}[style-notation=single,
-			style-notation-*=mixed]%\marginnote{\xetex, \luatex}%
+			style-notation-*=mixed]%\marginnote{\keyval{upright}{true}}%
+			\DeclareDifferential{\mdif}{\mathnormal{D}}[style-notation=single,
+			style-notation-*=mixed%\marginnote{\keyval{italic}{true}}%
 		\end{definition}
 		
 		\noindent The non-star and star version gives
@@ -1636,7 +1646,7 @@ indent_length "2"
 		When working with functional derivatives another differential is frequently encountered. This differential uses a delta symbol and is defined as
 		
 		\begin{definition}
-			\DeclareDifferential{\fdif}{\delta}%\marginnote{\pdftex, \xetex, \luatex}%
+			\DeclareDifferential{\fdif}{\delta}
 		\end{definition}
 		
 		\noindent For example an expression like
@@ -1653,7 +1663,7 @@ indent_length "2"
 		To wrap it up, a differential for differences is defined as
 		
 		\begin{definition}
-			\DeclareDifferential{\adif}{\Delta}%\marginnote{\pdftex, \xetex, \luatex}%
+			\DeclareDifferential{\adif}{\Delta}
 		\end{definition}
 		
 		\noindent For example
@@ -1663,8 +1673,9 @@ indent_length "2"
 	\end{function}
 	
 	\clearpage
-	\section{Package options}
-	This package accepts its options using the well-known \emph{key=value} syntax. The keys are divided into categories, for which each key have its associated category as a prefix. %Each category and option is explained below. 
+	\section{Options}
+	
+	This package accepts its options using the well-known \emph{key=value} syntax. The keys are divided into categories, for which each key have its associated category as a prefix.
 	
 	\begin{function}{\derivset}[updated = v1.0]
 		\begin{syntax}
@@ -1673,11 +1684,11 @@ indent_length "2"
 		The \macro{1} is meant to set the default values for derivatives and differentials options in the preamble. It can be used in the document but this is what the new \oarg{keyval list} arguments are for in the derivative and differential commands.
 		
 		\begin{argument}{1}
-			A mandatory argument that determines which command the \emph{key=value} pairs is assigned to, where the allowed \meta{commands} are the derivatives and differentials defined by the package and you, see \cref{ssec:defvar_dv,ssec:defvar_inf} for more information. The special value \texttt{all} is also allowed, which gives access to the options that applies to \textit{all} derivatives and differentials.
+			A mandatory argument that determines which command the \emph{key=value} pairs are assigned to, where the allowed \meta{commands} are the derivatives and differentials defined by the package and you, see \cref{ssec:defvar_dv,ssec:defvar_inf} for more information. The special value \texttt{all} is also allowed, which gives access to the options that applies to \textit{all} derivatives and differentials.
 		\end{argument}
 		
 		\begin{argument}{2}
-			This optional argument accepts its input as a comma-separated list of \emph{key=value} pairs. Leaving out \arg{2} sets the options to the package's default settings for the chosen \arg{1}. E.g. \macro{\derivset}[\narg{\macro{\odv}}] sets the options for the ordinary derivative to the packages default settings. %This argument is subject to change, see \cref{consid:DerivsetOptional} for more information.
+			This optional argument accepts its input as a comma-separated list of \emph{key=value} pairs. Leaving out \arg{2} sets the options to the package's default settings for the chosen \arg{1}. E.g. \macro{\derivset}[\narg{\macro{\odv}}] sets the options for the ordinary derivative to the packages default settings.
 		\end{argument}
 	\end{function}
 	
@@ -1695,8 +1706,29 @@ indent_length "2"
 	\end{itemize}
 	
 	\begin{note}
-		A value with superscripted \texttt{U}, \texttt{P} and \texttt{R} refers to a unicode engine i.e. \luatex{} and \xetex, \pdftex{} and requires package, respectively. Additionally, some keys have two versions; with and without \texttt{-/} at the end. These keys are related to the slash argument. If \keyval{switch-/}{false} then the keys with and without \texttt{-/} are used when the slash argument is present and absent, respectively. Setting \keyval{switch-/}{true} then these keys are used in the opposite cases of the slash argument's presence.
+		A value with superscripted \texttt{R} means it requires a package. Additionally, some keys have two versions; with and without \texttt{-/} at the end. These keys are related to the slash argument. If \keyval{switch-/}{false} then the keys with and without \texttt{-/} are used when the slash argument is present and absent, respectively. Setting \keyval{switch-/}{true} then these keys are used in the opposite cases of the slash argument's presence.
 	\end{note}
+	
+	\subsection{Package options}
+	The package options can be used with
+	\begin{center}
+		\ttfamily\small
+		\cs{usepackage}\oarg{keyval list}\narg{derivative}
+	\end{center}
+	
+	\begin{option}*{italic}[new = v1.1]
+		\begin{values}[default = false]
+			true, false
+		\end{values}
+		Sets the font-style of the infinitesimals $d$ and $D$ used in \cs{odv}, \cs{mdv}, \cs{odif} and \cs{mdif} to italic using \cs{mathnormal}. The options \key{italic} and \key{upright} are mutually exclusive.
+	\end{option}
+	
+	\begin{option}{upright}[new = v1.1]
+		\begin{values}[default = true]
+			true, false
+		\end{values}
+		Sets the font-style of the infinitesimals $d$ and $D$ used in \cs{odv}, \cs{mdv}, \cs{odif} and \cs{mdif} to upright using \cs{mathrm}. The options \key{italic} and \key{upright} are mutually exclusive.
+	\end{option}
 	
 	\subsection{Derivative options} \label{ssec:options_dv}
 	The options in this subsection are available for derivatives defined by the package and you with the commands in \cref{ssec:defvar_dv}.
@@ -1707,8 +1739,7 @@ indent_length "2"
 		\begin{values}[default = d]
 			\meta{math-font-style}\meta{infinitesimal}
 		\end{values}
-		Sets the derivative's infinitesimal including font style. This change was necessary to allow multiple font styles, e.g. \keyval{style-inf}{\cs{mathbf}\{\cs{mathrm}\{d\}\}}.
-		The default font style is \default. If an upright font is preferred then \cs{mathrm}\pdf{} and \cs{symup}\uni{} could be used, or if an italic font then \cs{mathnormal}\pdf{} and \cs{symit}\uni.
+		Sets the derivative's infinitesimal including font style. This change was necessary to allow multiple font styles, e.g. \keyval{style-inf}{\cs{mathbf}\narg{\cs{mathrm}\narg{d}}}. The default infinitesimal is a plain `\default` with no associated font style.
 	\end{option}
 	
 	\begin{option}{style-frac}
@@ -1725,14 +1756,14 @@ indent_length "2"
 		The derivative uses the fraction set by this key whenever \keyval{switch-/}{false} and the slash argument is present. The key's default value is a text-styled fraction \default\footref{foot:sfrac} i.e. on the form $\pdv[style-frac-/=\slashfrac, switch-/=false]{f}/{x,y}$.
 	\end{option}
 	
+	\clearpage
+	
 	\begin{option}{style-var}[new = v1.0]
 		\begin{values}[default = single]
 			single, multiple
 		\end{values}
 		This option determines how the derivative treats its variables and some features. The variable argument is treated as a single variable when \val{single} is used. Moreover the mixed order is set equal to the first order given in \keyval[cat=misc]{order}{\meta{order}} which by default is \val{1}. The variable argument is treated as a comma separated list of variables with \val{multiple} similarly to a partial derivative. Moreover the mixed order is automatically calculated from the list of orders given in \keyval[cat=misc]{order}{\meta{order}}.
 	\end{option}
-	
-	\clearpage
 	
 	\subsubsection*{Scaling}
 	
@@ -1787,6 +1818,8 @@ indent_length "2"
 		This key sets the left and right delimiters used to indicate the point of evaluation. These delimiters are inserted whenever \keyval{switch-/}{false} and the slash argument is absent. The key's default left and right delimiters are a left and a right parenthesis, respectively.
 	\end{option}
 	
+	\clearpage
+	
 	\begin{option}{delims-eval-/}
 		\begin{values}[default = .~\cs{rvert}]
 			\meta{left delimiter}\meta{right delimiter}
@@ -1800,8 +1833,6 @@ indent_length "2"
 		\end{values}
 		This key sets the left and right delimiters used around the function and these are inserted whenever \keyval[cat=misc]{fun}{true} is used. The key's default left and right delimiters are a left and a right parenthesis, respectively.
 	\end{option}
-	
-	\clearpage
 	
 	\begin{option}{delims-var}
 		\begin{values}[default = (~)]
@@ -1848,6 +1879,8 @@ indent_length "2"
 	\end{equation*}
 	where the Jacobian have been used as an example.
 	
+	\clearpage
+	
 	\begin{option}{sep-inf-ord}
 		\begin{values}[default = 0]
 			\meta{cs-number}, \marg{mspace}, \marg{delimiter}
@@ -1861,8 +1894,6 @@ indent_length "2"
 		\end{values}
 		This key sets the math space that is inserted between the infinitesimal and the function when the mixed order \emph{is equal} to \num{1}. The space is only inserted when a non-blank function is printed \emph{in the numerator}. The key's default value is \default{} \texttt{mu}.
 	\end{option}
-	
-	\clearpage
 	
 	\begin{option}{sep-ord-fun}
 		\begin{values}[default = 0]
@@ -1896,14 +1927,14 @@ indent_length "2"
 		\begin{values}[default = \cs{mathop}\{\}\cs{!}]
 			\meta{cs-number}, \marg{mspace}, \marg{delimiter}
 		\end{values}
-		They key sets the math space that is inserted between a variable and the following infinitesimal. The space is only inserted when the variable's order \emph{is equal} to \num{1}. It is only inserted when more than one non-blank variables are given. The key's default value is \default{}.
+		They key sets the math space that is inserted between a variable and the following infinitesimal. The space is only inserted when the variable's order \emph{is equal} to \num{1}. It is only inserted when more than one non-blank variables are given. The key's default value is \val{\default}.
 	\end{option}
 	
 	\begin{option}{sep-ord-inf}
 		\begin{values}[default = \cs{mathop}\{\}\cs{!}]
 			\meta{cs-number}, \marg{mspace}, \marg{delimiter}
 		\end{values}
-		They key sets the math space that is inserted between a variable and the following infinitesimal. The space is only inserted when the variable's order \emph{is different} from \num{1}. It is only inserted when more than one non-blank variables are given. The key's default value is \default{}.
+		They key sets the math space that is inserted between a variable and the following infinitesimal. The space is only inserted when the variable's order \emph{is different} from \num{1}. It is only inserted when more than one non-blank variables are given. The key's default value is \val{\default}.
 	\end{option}
 	
 	\begin{option}{sep-var-var}[new = v1.0]
@@ -1912,6 +1943,8 @@ indent_length "2"
 		\end{values}
 		They key sets the math space that is inserted between two variables. The space is only inserted when the \keyval{style-var}{single} is used. and when more than one non-blank variables are given. The key's default value is a comma.
 	\end{option}
+	
+	\clearpage
 	
 	\begin{option}{sep-eval-sb}
 		\begin{values}[default = 0]
@@ -1926,8 +1959,6 @@ indent_length "2"
 		\end{values}
 		This key sets the math space that is inserted in the evaluation superscript left to the point of evaluation. The space is only inserted when a non-blank superscript is given. The key's default value is \default{} \texttt{mu}.
 	\end{option}
-	
-	\clearpage
 	
 	\subsubsection*{Switches}
 	
@@ -2023,8 +2054,6 @@ indent_length "2"
 		The sorting algorithm \val{symbol} sorts the terms by their symbolic length in a descending manner. If the value \val{true} is used, then the terms will sorted in an ascending manner instead. See \cref{ssec:sort-reverse} for more information.
 	\end{option}
 	
-	\clearpage
-	
 	\subsubsection*{Miscellaneous}
 	
 	\begin{option}*{fun}[cat=misc, new = v1.0]
@@ -2068,8 +2097,6 @@ indent_length "2"
 		Without setting the option to a value is equivalent to setting it to \val{all} as seen above.
 	\end{option}
 	
-	\clearpage
-	
 	\begin{option}{order, ord}[cat=misc, new = v1.0]
 		\begin{values}[default = 1]
 			\marg{cs-orders}
@@ -2096,7 +2123,7 @@ indent_length "2"
 		\begin{values}[default = d]
 			\meta{math-font-style}\meta{infinitesimal}
 		\end{values}
-		Sets the differential's infinitesimal including font style. This change was necessary to allow multiple font styles, e.g. \keyval{style-inf}{\cs{mathbf}\{\cs{mathrm}\{d\}\}}. The default font style is \default*. If an upright font is preferred then \cs{mathrm}\pdf{} and \cs{symup}\uni{} could be used, or if an italic font is preferred then \cs{mathnormal}\pdf{} and \cs{symit}\uni.
+		Sets the differential's infinitesimal including font style. This change was necessary to allow multiple font styles, e.g. \keyval{style-inf}{\cs{mathbf}\narg{\cs{mathrm}\narg{d}}}. The default infinitesimal is a plain `\default` with no associated font style.
 	\end{option}
 	
 	\begin{option}{style-notation}
@@ -2181,6 +2208,8 @@ indent_length "2"
 		This key sets the math space that is inserted in the infinitesimal's power left to the order. It is only inserted when the mixed order is different from \num{1}. The key's default value is \default{} \texttt{mu}.
 	\end{option}
 	
+	\clearpage
+	
 	\begin{option}{sep-inf-var}
 		\begin{values}[default = 0]
 			\meta{cs-number}, \marg{mspace}, \marg{delimiter}
@@ -2194,8 +2223,6 @@ indent_length "2"
 		\end{values}
 		This key sets the math space that is inserted between the infinitesimal's power and the following variable. The space is only inserted when the order \emph{is different} from \num{1} and a non-blank variable is given. The key's default value is \default{} \texttt{mu}.
 	\end{option}
-	
-	\clearpage
 	
 	\begin{option}{sep-var-inf}
 		\begin{values}[default = \cs{mathop}\{\}\cs{!}]
@@ -2267,11 +2294,11 @@ indent_length "2"
 	\subsection{All derivatives and differentials} \label{ssec:both_options}
 	The options in this subsection are applied to all derivatives and differential because some options should be consisting regardless of the derivative and differential. The options are accessed using \macro{\derivset}[\narg{all},\oarg{key=value}].
 	
-	\begin{option}{scale-auto}
-		\begin{values}[default = leftright]
+	\begin{option}{scale-auto}[updated = v1.1]
+		\begin{values}[default = {leftright, mleftmright\req}]
 			leftright, mleftmright\req
 		\end{values}
-		This package uses \cs{left} and \cs{right} to automatically scale delimiters. The value \val{mleftmright} requires the \pkg{mleftright} package, which makes this package use \cs{mleft} and \cs{mright} instead.
+		Sets the dynamic scaling methods of delimiters. The value \val{leftright} sets the method to use \cs{left} and \cs{right}. The value \val{mleftmright} requires the \pkg{mleftright} package and sets the method to use \cs{mleft} and \cs{mright} instead. The default value is \val{leftright} unless \pkg{mleftright} have been loaded then it is \val{mleftmright}.
 	\end{option}
 	
 	
@@ -2574,7 +2601,7 @@ indent_length "2"
 		\end{change}
 		\smallskip
 		\begin{change}[version = 0.98, date = 2020-07-20, beta = true]
-			\item Fixed a bug concerning the subscript argument due to recent changes to the \pkg{xparse} package dated 2020-05-14 (the fix works with earlier versions of xparse as well).
+			\item Fixed a bug concerning the subscript argument due to recent changes to the \pkg{xparse} package dated 2020-05-14 (the fix works with earlier versions of \pkg{xparse} as well).
 		\end{change}
 		\begin{change}[version = 1.0, date = 2021-05-25, beta = false]
 			\item Added new options for derivatives
@@ -2587,17 +2614,23 @@ indent_length "2"
 			\item Changed \cs{derivset} to define default options
 			\item Merged the codes for ordinary and partial derivatives
 			\item Removed the mixed order argument
-			\item Removed the options `misc-add-delims` and `misc-remove-delims`
+			\item Removed the options \key[index=false]{misc-add-delims} and \key[index=false]{misc-remove-delims}
 			\item Replaced the commands in section 5 with new ones. Old ones no longer works.
 			\item Code clean-up and optimization
 			\item Fixed code errors
-			\item Fixed Documentation errors
+			\item Fixed documentation errors
 			\item Enhanced support for preventing options effecting nested derivatives/differentials
 		\end{change}
 		\begin{change}[version = 1.01, date = 2021-05-28, beta = false]
 			\item Changed the option \key[index=false]{sep-end} default value because it caused issues
 			\item Fixed code errors due to changes introduced in version 1.0 to the option \key[index=false]{style-inf}
 			\item Fixed documentation errors
+		\end{change}
+		\begin{change}[version = 1.1, date = 2021-06-03, beta = false]
+			\item Added package options to be used in \cs{usepackage}\oarg{options}\narg{derivative}
+			\item No longer secretly depends on \pkg{unicode-math} when using \xetex{} or \luatex
+			\item The package no longer uses \cs{symup} which have been replaced with \cs{mathrm} for simplicity
+			\item If \pkg{mleftright} is loaded then the default value of \key[index=false]{scale-auto} is \val{mleftmright}
 		\end{change}
 	\end{changelog}
 	
