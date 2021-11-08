@@ -1,7 +1,0 @@
-quote '+'
-item_0 "\n \\bigskip \\item \\begingroup \\color\{RoyalBlue\} "
-item_x1 " \\endgroup \n \\subitem \\begingroup \\small \\ttfamily \\upshape "
-item_1 "\n \\subitem \\begingroup \\small \\ttfamily \\upshape "
-delim_1 "\\endgroup, "
-indent_space "\t"
-indent_length "2"

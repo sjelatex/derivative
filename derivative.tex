@@ -50,6 +50,17 @@ indent_length "2"
 	\definecolor{RoyalBlue}{RGB}{0, 35, 102}
 	\definecolor{RoyalGreen}{RGB}{32, 77, 2}
 
+	%\definecolor{RoyalGray}{RGB}{75, 75, 75}
+	%\definecolor{RoyalDarkGray}{RGB}{225, 225, 225}
+	%\definecolor{RoyalLightGray}{RGB}{30, 30, 30}
+	%\definecolor{RoyalRed}{RGB}{255, 177, 151} % 207, 102, 121
+	%\definecolor{RoyalBlue}{RGB}{187, 134, 252} % 55, 185, 255
+	%\definecolor{RoyalGreen}{RGB}{3, 218, 198} % 52, 177, 20
+	%\definecolor{RoyalPageCoulor}{RGB}{18, 18, 18} % 30, 30, 30
+	%\definecolor{RoyalTextCoulor}{RGB}{225, 225, 225}
+	%\pagecolor{RoyalPageCoulor}
+	%\color{RoyalTextCoulor}
+
 \RequirePackage{amsmath, amsthm}
 	\allowdisplaybreaks
 	\theoremstyle{remark}
@@ -92,7 +103,7 @@ indent_length "2"
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-\NewDocumentCommand{\forside}{ m }
+\NewDocumentCommand{\forside}{}
 {
 	\thispagestyle{empty}
 	
@@ -123,7 +134,7 @@ indent_length "2"
 	
 	\begin{abstract}
 		\noindent \ignorespaces
-		#1
+		The~\mypackage{}~package~provides~a~set~of~commands~which~makes~writing~ordinary~and~partial~derivatives~of~arbitrary~order~in~a~straight~forward~manner.~Additionally,~this~package~provides~a~set~of~commands~to~define~variants~of~the~aforementioned~derivatives.~A~set~of~optional~arguments~along~with~lots~of~package~options~allow~for~easy~and~great~flexibility~over~the~derivative's~format,~such~as~where~the~function~is~positioned,~point~of~evaluation,~and~switching~between~fraction~styles.~Moreover,~the~mixed~order~of~the~partial~derivative~and~variants~hereof~is~automatically~computed.~This~package~is~written~in~the~\pkg{expl3}~language~and~requires~therefore~the~\LaTeX3~package~bundles~\pkg{l3kernel}~and~\pkg{l3package}.~Additionally,~the~\pkg{mleftright}~package~is~optional~and~provides~the~improved~automatically~scaling~\cs{mleft}~and~\cs{mright}.
 	\end{abstract}
 	
 	\vfill
@@ -382,6 +393,7 @@ indent_length "2"
 \cs_new_protected:Npn \mydoc_ch_end:
 {
 }
+
 
 \tl_new:N \l__mydoc_number_tl
 \tl_new:N \l_mydoc_index_item_tl
@@ -1307,12 +1319,14 @@ indent_length "2"
 \ExplSyntaxOff
 \makeatother
 
+
+
 \Pakkenavn{derivative}
 \Titel{The \pakkenavn{} package}
 \Forfatter{Simon Jensen}
 \Email{sjelatex@gmail.com}
-\Dato{2021/05/28}
-\Version{1.01}
+\Dato{2021/05/25}
+\Version{1.0}
 
 \RequirePackage{derivative}[\dato]
 	\derivset{all}[scale-auto = mleftmright]
@@ -1348,14 +1362,13 @@ indent_length "2"
 
 \begin{document}
 	
-	\forside{%
-	The \mypackage{} package provides a set of commands which makes writing ordinary and partial derivatives of arbitrary order in a straight forward manner. Additionally, this package provides a set of commands to define variants of the aforementioned derivatives. A set of optional arguments along with lots of package options allow for easy and great flexibility over the derivative's format, such as where the function is positioned, point of evaluation, and switching between fraction styles. Moreover, the mixed order of the partial derivative and variants hereof is automatically computed. This package is written in the \pkg{expl3} language and requires therefore the \LaTeX3 package bundles \pkg{l3kernel} and \pkg{l3package}. Additionally, the \pkg{mleftright} package is optional and provides the improved automatically scaling \cs{mleft} and \cs{mright}.%
-	}
+	\forside
 	
 	\clearpage
 	\tableofcontents
 	
 	\clearpage
+	\section{Introduction}
 	This package started as a personal package a few years ago that I used in various projects. Firstly, it was written in \tex{} and \latex, which gave rise to various errors as the complexity of the package grew larger and ended up as a spaghetti code. Therefore, the code was rewritten into the \latex3 language and may now be easily maintained. Originally this package was written because there did not exist any great package for derivatives. It was first much later that I discovered the \pkg{diffcoeff} package, which does a good job. However, at this time, I had already written much of the code with no documentation. So I decided to write one and make it into a package for the public.
 	
 	As a note on terminology, I use the wording \emph{infinitesimal} abbreviated as \texttt{inf} for the operator symbols $d, \partial, \delta$ etc. that used in derivatives like $\odv{y}{x}, \pdv{y}{x}, \fdv{y}{x}$ and in differentials like $\odif{x}, \pdif{x}, \fdif{x}$. In the description of macros and options, I often write \emph{cs-\meta{placeholder}} to denote a comma-separated list of \meta{placeholder}. For example, \oarg{cs-numbers} is used in the option section for math space keys to denote comma-separated list of numbers. It should also be noted that whenever an argument reads \meta{keyvalue list}, it means that it is a comma-separated list of keyvalue pairs.
@@ -2028,7 +2041,7 @@ indent_length "2"
 	\subsubsection*{Miscellaneous}
 	
 	\begin{option}*{fun}[cat=misc, new = v1.0]
-		\begin{values}[default = false]
+		\begin{values}
 			true, false
 		\end{values}
 		Adds or remove delimiters around the function.
@@ -2041,7 +2054,7 @@ indent_length "2"
 	\end{option}
 	
 	\begin{option}{frac}[cat=misc, new = v1.0]
-		\begin{values}[default = false]
+		\begin{values}
 			true, false
 		\end{values}
 		Adds or remove delimiters around the fractional part of the derivative.
@@ -2219,7 +2232,7 @@ indent_length "2"
 	\end{option}
 	
 	\begin{option}{sep-end}
-		\begin{values}[default = 0]
+		\begin{values}[default = \cs{mathop}\{\}\cs{!}]
 			\meta{cs-number}, \marg{mspace}, \marg{delimiter}
 		\end{values}
 		Sets the math space that is inserted to the right of the last differential. The key's default value is \val{\default}.
@@ -2273,6 +2286,7 @@ indent_length "2"
 		\end{values}
 		This package uses \cs{left} and \cs{right} to automatically scale delimiters. The value \val{mleftmright} requires the \pkg{mleftright} package, which makes this package use \cs{mleft} and \cs{mright} instead.
 	\end{option}
+	
 	
 	
 	\clearpage
@@ -2471,8 +2485,6 @@ indent_length "2"
 		\pdv[order={n+3k, n-k}, mixed-order={2(n+k)}]{f}{x,y}
 	\end{example}
 	
-	
-	
 	\clearpage
 	\section{Miscellaneous} 
 	
@@ -2506,6 +2518,7 @@ indent_length "2"
 	\end{function}
 	
 	
+	
 	\clearpage
 	\section{To do}\label{sec:todo}
 	
@@ -2518,11 +2531,11 @@ indent_length "2"
 		\answer{\cmark\xmark}{There could be an draft/final option for the package. But what is should turn off/on is harder to say.}
 	\end{todo}
 	
-	%\subsection{Future changes}
-	%The list describes what \emph{will be changed} in the package in a later release.
-	%\begin{changes}
-	%	\item
-	%\end{changes}
+	\subsection{Future changes}
+	The list describes what \emph{will be changed} in the package in a later release.
+	\begin{changes}
+		\item
+	\end{changes}
 	
 	\subsection{Future considerations}
 	The list describes what \emph{might be changed or added} to the package in a later release.
@@ -2534,6 +2547,7 @@ indent_length "2"
 	\end{consideration}
 	
 	
+	
 	\clearpage
 	\addsec{Index}
 	Numbers in bold  refer to the page where the entry is defined.
@@ -2543,6 +2557,8 @@ indent_length "2"
 	\clearpage
 	
 	\printindex[macro]
+	
+	
 	
 	\clearpage
 	\addsec{Change history}
@@ -2593,11 +2609,6 @@ indent_length "2"
 			\item Fixed code errors
 			\item Fixed Documentation errors
 			\item Enhanced support for preventing options effecting nested derivatives/differentials
-		\end{change}
-		\begin{change}[version = 1.01, date = 2021-05-28, beta = false]
-			\item Changed the option \key[index=false]{sep-end} default value because it caused issues
-			\item Fixed code errors due to changes introduced in version 1.0 to the option \key[index=false]{style-inf}
-			\item Fixed documentation errors
 		\end{change}
 	\end{changelog}
 	

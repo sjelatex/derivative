@@ -16,7 +16,7 @@
 \NeedsTeXFormat{LaTeX2e}
 
 \RequirePackage{xparse}[2018/05/09]
-\ProvidesExplPackage{derivative}{2021/05/28}{1.01}{Nice and easy derivatives and differentials for LaTeX}
+\ProvidesExplPackage{derivative}{2021/05/25}{1.0}{Nice and easy derivatives and differentials for LaTeX}
 
 %%%%%  Useful conditionals  %%%%%
 
@@ -147,7 +147,6 @@
 
 \prop_const_from_keyval:Nn \c__deriv_dv_pkg_keys_prop
 {
-	style-inf     = d,
 	style-frac    = \frac,
 	style-frac-/  = \slashfrac,
 	style-var     = single,
@@ -189,9 +188,12 @@
 	mixed-order = 1
 }
 
+\bool_lazy_or:nnTF { \sys_if_engine_luatex_p: } { \sys_if_engine_xetex_p: }
+{ \prop_gput:Nnn \c__deriv_dv_pkg_keys_prop { style-inf } { \symnormal  } }
+{ \prop_gput:Nnn \c__deriv_dv_pkg_keys_prop { style-inf } { \mathnormal } }
+
 \prop_const_from_keyval:Nn \c__deriv_i_pkg_keys_prop
 {
-	style-inf = d,
 	style-notation = multiple,
 	style-notation-* = single,
 	scale-var    = auto,
@@ -205,11 +207,15 @@
 	sep-var-inf  = \mathop{}\!,
 	sep-var-var  = {,},
 	sep-ord-ord  = {,},
-	sep-end      = 0,
+	sep-end      = \mathop{}\!,
 	switch-*     = false,
 	var = none,
 	order = 1
 }
+
+\bool_lazy_or:nnTF { \sys_if_engine_luatex_p: } { \sys_if_engine_xetex_p: }
+{ \prop_gput:Nnn \c__deriv_i_pkg_keys_prop { style-inf } { \symnormal } }
+{ \prop_gput:Nnn \c__deriv_i_pkg_keys_prop { style-inf } { \mathnormal } }
 
 %%%%%%  Key-val for all  %%%%%%
 
@@ -381,13 +387,12 @@
 \cs_new_protected:Npn \deriv_preamble:NNnnn #1 #2 #3 #4 #5
 {
 	\tl_set:Nx #1 { \cs_to_str:N #2 }
-	\tl_if_novalue:nTF {#4}
-	{ \__deriv_preamble_aux:Vnn #1 { style-inf={#3} }    {#5} }
-	{ \__deriv_preamble_aux:Vnn #1 { style-inf={#3}, #4} {#5} }
+	\__deriv_preamble_aux:Vnn #1 {#4} {#5}
+	\exp_args:NV \deriv_set_style_inf:nnn {#1} {#3} {#5}
 }
-% variant, inf, dv/i
+% dv/i, variant, inf
 \cs_new_protected:Npn \deriv_set_style_inf:nnn #1 #2 #3
-{ \__deriv_set_default:nnn {#1} { style-inf = {#2} } {#3} }
+{ \keys_set:nn { deriv/#3/#1 } { style-inf = {#2} } } 
 % variant, key-value, dv/i
 \cs_new_protected:Npn \__deriv_preamble_aux:nnn #1 #2 #3
 {
