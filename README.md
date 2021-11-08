@@ -1,17 +1,22 @@
-## README for derivative package v0.98 dated 2020-07-20
+## README for derivative package v1.0 dated 2021-05-25
 
-The package provides a set of commands `\NewOdvVariant`, `\NewPdvVariant` etc. that can be used to define a variant of a derivative. The package have already defined several derivatives:
+The package provides a set of commands `\NewDerivative`, `\NewDifferential` etc. that can be used to define a derivative or a differential operator, respectively. The package have already defined several derivatives and differentials:
 
- - `\odv`  Ordinary derivative
- - `\pdv`  Partial derivative
- - `\fdv`  Functional derivtive
- - `\mdv`  Material derivative
- - `\adv`  Average rate of change
- - `\jdv`  Jacobian
-
+ - `\odv`   Ordinary derivative
+ - `\pdv`   Partial derivative
+ - `\fdv`   Functional derivtive
+ - `\mdv`   Material derivative
+ - `\adv`   Average rate of change
+ - `\jdv`   Jacobian
+ - `\odif`  Shorthand for ordinary derivative
+ - `\pdif`  Shorthand for partial derivative
+ - `\fdif`  Shorthand for functonal derivative
+ - `\mdif`  Shorthand for material derivative or general differential operator
+ - `\adif`  Difference
+ 
 ### Copyright and license
 
-Copyright 2019-2020 Simon Jensen
+Copyright 2019-2021 Simon Jensen
 
 This work may be distributed and/or modified under the
 conditions of the LaTeX Project Public License, either version 1.3
