@@ -1,5 +1,5 @@
 % derivative.tex
-% Copyright 2019-2021 Simon Jensen
+% Copyright 2019-2022 Simon Jensen
 % 
 % This work may be distributed and/or modified under the
 % conditions of the LaTeX Project Public License, either version 1.3
@@ -83,8 +83,8 @@ indent_length "2"
 \RequirePackage[unicode]{hyperref}
 \RequirePackage[nameinlink]{cleveref}
 
-\makeatletter
 \ExplSyntaxOn
+\makeatletter
 
 \tl_new:N \pakkenavn
 \tl_new:N \titel
@@ -147,7 +147,7 @@ indent_length "2"
 	columns = fullflexible,
 	basicstyle = \ttfamily\upshape\small,
 	alsoletter =  {\\,-,*,/},
-	keywords = [0]{style-inf, style-var, style-frac, style-frac-/, style-notation, style-notation-*, scale-eval, scale-eval-/, scale-fun, scale-var, scale-frac, scale-frac-/, scale-var, scale-var-*, delims-eval, delims-eval-/, delims-fun, delims-var, delims-frac, delims-var-*, delims-frac-/, sep-inf-ord, sep-inf-fun, sep-ord-fun, sep-frac-fun, sep-inf-var, sep-var-ord, sep-var-inf, sep-ord-inf, sep-var-var, sep-eval-sb, sep-eval-sp, sep-begin, sep-inf-ord, sep-inf-var, sep-ord-var, sep,var-inf, sep-var-var, sep-ord-ord, sep-end, switch-*, switch-/, add-delims, remove-delims, add-var-delims, order, morder, sort-method, sort-numerical, sort-abs-reverse, sort-number-reverse, sort-sign-reverse, sort-symbol-reverse, fun, frac, var, order, ord, mixed-order, mixord, scale-auto},
+	keywords = [0]{style-inf, style-var, style-frac, style-frac-/, style-notation, style-notation-*, scale-eval, scale-eval-/, scale-fun, scale-var, scale-var-*, scale-frac, scale-frac-/, delims-eval, delims-eval-/, delims-fun, delims-var, delims-var-*, delims-frac, delims-frac-/, sep-inf-ord, sep-inf-fun, sep-ord-fun, sep-frac-fun, sep-inf-var, sep-var-ord, sep-var-inf, sep-ord-inf, sep-var-var, sep-eval-sb, sep-eval-sp, sep-begin, sep-inf-ord, sep-inf-var, sep-ord-var, sep-var-inf, sep-ord-ord, sep-end, switch-*, switch-/, switch-sort, sort-method, sort-numerical, sort-abs-reverse, sort-lexical-reverse, sort-number-reverse, sort-sign-reverse, sort-symbol-reverse, fun, frac, var, order, ord, mixed-order, mixord, scale-auto},
 	keywordstyle = [0]\__mydoc_option_font:,
 	keywords = [1]{\\odv, \\pdv, \\mdv, \\fdv, \\adv, \\jdv, \\odif, \\pdif, \\mdif, \\fdif, \\adif, \\NewDerivative, \\RenewDerivative, \\ProvideDerivative, \\DeclareDerivative, \\NewDifferential, \\RenewDifferential, \\ProvideDifferential, \\DeclareDifferential, \\slashfrac, \\derivset},
 	keywordstyle = [1]\__mydoc_function_font:,
@@ -394,7 +394,6 @@ indent_length "2"
 \cs_new_protected:Npn \mydoc_ch_end:
 {
 }
-
 
 \tl_new:N \l__mydoc_number_tl
 \tl_new:N \l_mydoc_index_item_tl
@@ -659,7 +658,10 @@ indent_length "2"
 	\group_begin:
 	\small \ttfamily
 	New: \tl_use:N \c_space_tl
-	\tl_use:N #1
+	
+	\tl_if_head_eq_charcode:fNTF {#1} v
+	{ \tl_use:N #1 }
+	{ v\tl_use:N #1 }
 	\group_end:
 }
 
@@ -668,7 +670,10 @@ indent_length "2"
 	\group_begin:
 	\small \ttfamily
 	Updated: \tl_use:N \c_space_tl
-	\tl_use:N #1
+	
+	\tl_if_head_eq_charcode:fNTF {#1} v
+	{ \tl_use:N #1 }
+	{ v\tl_use:N #1 }
 	\group_end:
 }
 
@@ -1318,15 +1323,16 @@ indent_length "2"
 {  \mydoc_cs_to_str:N #1 }
 
 \ExplSyntaxOff
+\makeatother
 
 \Pakkenavn{derivative}
 \Titel{The \pakkenavn{} package}
 \Forfatter{Simon Jensen}
 \Email{sjelatex@gmail.com}
-\Dato{2021/06/03}
-\Version{1.1}
+\Dato{2022/07/09}
+\Version{1.2}
 
-\RequirePackage[upright]{derivative}[\dato]
+\RequirePackage{derivative}[\dato]
 %	\derivset{all}[scale-auto = mleftmright]
 
 \hypersetup
@@ -1360,16 +1366,20 @@ indent_length "2"
 
 \begin{document}
 	
-	\forside{%
-	The \mypackage{} package provides a set of commands which makes writing ordinary and partial derivatives of arbitrary order in a straight forward manner. Additionally, this package provides a set of commands to define variants of the aforementioned derivatives. A set of optional arguments along with lots of package options allow for easy and great flexibility over the derivative's format, such as where the function is positioned, point of evaluation, and switching between fraction styles. Moreover, the mixed order of the partial derivative and variants hereof is automatically computed. This package is written in the \pkg{expl3} language and requires therefore the \LaTeX3 package bundles \pkg{l3kernel} and \pkg{l3package}. Additionally, the \pkg{mleftright} package is optional and provides the improved automatically scaling \cs{mleft} and \cs{mright}.}
+	\forside{The \mypackage{} package provides a set of commands which makes writing ordinary and partial derivatives of arbitrary order in a straight forward manner. Additionally, this package provides a set of commands to define variants of the aforementioned derivatives. A set of optional arguments along with lots of package options allow for easy and great flexibility over the derivative's format, such as where the function is positioned, point of evaluation, and switching between fraction styles. Moreover, the mixed order of the partial derivative and variants hereof is automatically computed. This package is written in the \pkg{expl3} language and requires therefore the \LaTeX3 package bundles \pkg{l3kernel} and \pkg{l3package}. Additionally, the \pkg{mleftright} package is optional and provides the improved automatically scaling \cs{mleft} and \cs{mright}.}
 	
 	\clearpage
 	\tableofcontents
 	
 	\clearpage
+	\section{Introduction}
 	This package started as a personal package a few years ago that I used in various projects. Firstly, it was written in \tex{} and \latex, which gave rise to various errors as the complexity of the package grew larger and ended up as a spaghetti code. Therefore, the code was rewritten into the \latex3 language and may now be easily maintained. Originally this package was written because there did not exist any great package for derivatives. It was first much later that I discovered the \pkg{diffcoeff} package, which does a good job. However, at this time, I had already written much of the code with no documentation. So I decided to write one and make it into a package for the public.
 	
 	As a note on terminology, I use the wording \emph{infinitesimal} abbreviated as \texttt{inf} for the operator symbols $d, \partial, \delta$ etc. that used in derivatives like $\odv{y}{x}, \pdv{y}{x}, \fdv{y}{x}$ and in differentials like $\odif{x}, \pdif{x}, \fdif{x}$. In the description of macros and options, I often write \emph{cs-\meta{placeholder}} to denote a comma-separated list of \meta{placeholder}. For example, \oarg{cs-numbers} is used in the option section for math space keys to denote comma-separated list of numbers. It should also be noted that whenever an argument reads \meta{keyvalue list}, it means that it is a comma-separated list of keyvalue pairs.
+	
+	\bigskip
+	
+	\noindent The github respository can be found at \href{https://github.com/sjelatex/derivative}{www.github.com/sjelatex/derivative}.
 	
 	
 	
@@ -1477,7 +1487,7 @@ indent_length "2"
 		\begin{equation*}
 			\odv{f}{x} = \lim_{h\to 0} \mleft( \frac{ f(x+h) - f(x) }{ h } \mright)
 		\end{equation*}
-		However it can always be changed with the \key{style-inf} key. 
+		However it can always be changed with the \key{style-inf} key.
 	\end{function}
 	
 	\begin{function}{\mdv}[updated=v1.1]
@@ -1990,16 +2000,34 @@ indent_length "2"
 		\noindent respectively. The key's default value is \default.
 	\end{option}
 	
+	\begin{option}{switch-sort}[new = 1.2]
+		\begin{values}[default = true]
+			true, false
+		\end{values}
+		The sorting algorithm of the mixed order is turned on when given the value \val{true} i.e. the methods given in \keyval*{sort-method}{\dots} are applied. Likewise, the sorting algorithm is turned off when given the value \val{false} i.e. the terms in the mixed order are ordered by first appearance in \keyval*{order}{\dots}. As an example, compare below where the option is turned on (\val{true}) and off (\val{false})
+		
+		\begin{example}
+			\pdv[switch-sort=false, order={a+b,2kn-d,2-2b}]{f}{x,y,z} \\
+			\pdv[switch-sort=true, order={a+b,2kn-d,2-2b}]{f}{x,y,z}
+		\end{example}
+		
+		\noindent respectively. The key's default value is \default.
+	\end{option}
+	
 	\subsubsection*{Sort}
 	The keys given in this subsection will be briefly described here and a in-depth description will be given in \cref{ssec:overall_order}.
 	
-	\begin{option}{sort-method}[updated = v1.0]
+	\begin{option}{sort-method}[updated = v1.2]
 		\begin{values}[default = {sign, symbol, abs}]
-			abs, number, sign, symbol
+			abs, lexical, number, sign, symbol
 		\end{values}
-		This key sets the sorting method behind the mixed order using build-in algorithms. The symbolic terms in the mixed order are sorted by their sign, symbolic length, numerical value and absolute value by the \val{sign}, \val{symbol}, \val{number} and \val{abs} algorithms, respectively. The key takes its input as a comma-separated list of values, accepting up to three values e.g.
+		This key sets the sorting method behind the mixed order using build-in algorithms. The symbolic terms in the mixed order are sorted by their sign, symbolic length, numerical value and absolute value by the \val{sign}, \val{symbol}, \val{number} and \val{abs} algorithms, respectively. The value \val{lexical} sorts the terms by lexicographical order i.e. alphabetically. The key takes its input as a comma-separated list of values, accepting up to three values e.g.
 		
 		\begin{example}
+			\pdv[sort-method=abs, order={c+kn,-b+2a}]{f}{x,y} \\
+			\pdv[sort-method=lexical, order={c+kn,-b+2a}]{f}{x,y} \\
+			\pdv[sort-method=number, order={c+kn,-b+2a}]{f}{x,y} \\
+			\pdv[sort-method=symbol, order={c+kn,-b+2a}]{f}{x,y} \\
 			\pdv[sort-method=sign, order={c+kn,-b+2a}]{f}{x,y} \\
 			\pdv[sort-method={sign,symbol}, order={c+kn,-b+2a}]{f}{x,y} \\
 			\pdv[sort-method={sign,symbol,abs}, order={c+kn,-b+2a}]{f}{x,y}
@@ -2031,6 +2059,13 @@ indent_length "2"
 			true, false
 		\end{values}
 		The sorting algorithm \val{abs} sorts the terms by their absolute value in a descending manner. If the value \val{true} is used, then the terms will be sorted in an ascending manner instead. See \cref{ssec:sort-reverse} for more information.
+	\end{option}
+	
+	\begin{option}{sort-lexical-reverse}[new = v1.2]
+		\begin{values}[default = false]
+			true, false
+		\end{values}
+		The sorting algorithm \val{lexical} sorts the terms in lexicographical order according to their character code i.e. alphabetically. If the value \val{true} is used, then the terms will be sorted in reverse lexicographical order instead. See \cref{ssec:sort-reverse} for more information.
 	\end{option}
 	
 	\begin{option}{sort-number-reverse}[new = v1.0]
@@ -2104,7 +2139,7 @@ indent_length "2"
 		Sets the order of differentiation for each variable as a comma separated list of values.
 	\end{option}
 	
-	\bigskip\bigskip
+	\clearpage
 	
 	\begin{option}{mixed-order, mixord}[cat=misc, new = v1.0]
 		\begin{values}[default = 1]
@@ -2137,7 +2172,6 @@ indent_length "2"
 			\odif[style-notation=single, order={n,1,2}]{x,y,z,t} \\
 			\odif[style-notation=mixed, order={n,1,2}]{x,y,z,t}
 		\end{example}
-		
 	\end{option}
 	
 	\begin{option}{style-notation-*}
@@ -2207,8 +2241,6 @@ indent_length "2"
 		\end{values}
 		This key sets the math space that is inserted in the infinitesimal's power left to the order. It is only inserted when the mixed order is different from \num{1}. The key's default value is \default{} \texttt{mu}.
 	\end{option}
-	
-	\clearpage
 	
 	\begin{option}{sep-inf-var}
 		\begin{values}[default = 0]
@@ -2370,10 +2402,11 @@ indent_length "2"
 	A unique feature of this package is that the sorting method behind the mixed order may be changed using built-in algorithms and there are currently four available: \val{abs}, \val{number}, \val{sign} and \val{symbol}. The algorithms have been chosen such that it the terms in the mixed order may be arranged in many ways with as few algorithms as possible to suit your liking. A sorting method may consist of up to three algorithms which are applied in layers.
 	
 	\begin{itemize}
-		\item The sorting algorithm \val{sign} separates the positive and negative terms, and puts the positive terms before the negative terms in the mixed order. The option \keyval{sort-sign-reverse}{true} reverses ordering is reversed such that the negative terms appear before the positive terms.
-		\item The sorting algorithm \val{symbol} separates the terms by their symbolic length, where the terms are sorted in a descending manner according to their length. The option \keyval{sort-symbol-reverse}{true} sorts the terms in a ascending manner instead.
-		\item The sorting by \val{abs} separates the terms by their absolute value, where the terms are ordered in a descending manner. The option \keyval{sort-abs-reverse}{true} sorts the terms in an ascending manner instead.
-		\item The sorting by \val{number} separates the terms by their numerical value, where the terms are ordered in a descending manner. The option \keyval{sort-number-reverse}{true} sort the terms in an ascending manner instead.
+		\item The sorting algorithm \val{sign} separates the positive and negative terms, and puts the positive terms before the negative terms in the mixed order. The option \keyval{sort-sign-reverse}{true} reverses ordering such that the negative terms appear before the positive terms.
+		\item The sorting algorithm \val{symbol} sorts the terms in a descending manner according to their length. The option \keyval{sort-symbol-reverse}{true} sorts the terms in a ascending manner instead.
+		\item The sorting by \val{abs} sorts the terms in a descending manner. The option \keyval{sort-abs-reverse}{true} sorts the terms in an ascending manner instead.
+		\item The sorting by \val{number} sorts the terms in a descending manner. The option \keyval{sort-number-reverse}{true} sort the terms in an ascending manner instead.
+		\item The sorting by \val{lexical} sorts the terms in a lexicographical order that is alphabetically. The option \keyval{sort-number-reverse}{true} sort the terms in reverse lexicographical ordering.
 	\end{itemize}
 	
 	When using the option \keyval{sort-method}{\{...\}}, the number of algorithms determines the number of layers e.g. \keyval*{sort-method}{sign,symbol} is a sorting method with two layers, where the algorithms \val{sign} and \val{symbol} are applied in layer \num{1} and layer \num{2}, respectively. E.i the \val{sign} algorithm splits the terms into two groups, one with positive terms and one with negative terms. Then the \val{symbol} algorithm will sorts the terms within each groups according to the terms symbolic length. The mixed order is then formed by combining these two groups.
@@ -2460,9 +2493,7 @@ indent_length "2"
 	as expected.
 	
 	\subsection{The numerical term} \label{ssec:sort-numerical}
-	With the symbolic part of the mixed order treated, it is time to look at the numerical term\footref{foot:numerical-term} which have a symbolic of zero. For this reason it is treated differently than the symbolic terms.
-	
-	The numerical term can be placed either at the beginning or at the end of the mixed order with the values \val{first} and \val{last}, respectively. The package can also determine where to place the numerical term with the value \val{auto}. Compare below
+	With the symbolic part of the mixed order treated, it is time to look at the numerical term\footref{foot:numerical-term} which have a symbolic of zero. For this reason it is treated differently than the symbolic terms. The numerical term can be placed either at the beginning or at the end of the mixed order with the values \val{first} and \val{last}, respectively. The package can also determine where to place the numerical term with the value \val{auto}. Compare below
 	\begin{align*}
 		\text{\inlinecode{sort-numerical=auto:}}  && 
 		\pdv[order={\beta, 2}, sort-numerical=auto]{f}{x,y}   &&
@@ -2476,19 +2507,21 @@ indent_length "2"
 		\text{\inlinecode{sort-numerical=symbolic:}}  && 
 		\pdv[order={\beta, 2}, sort-numerical=symbolic]{f}{x,y}   &&   \pdv[order={\beta, -2}, sort-numerical=symbolic]{f}{x,y}  &&   \pdv[order={-\beta, 2}, sort-numerical=symbolic]{f}{x,y}  &&   \pdv[order={-\beta, -2}, sort-numerical=symbolic]{f}{x,y}
 	\end{align*}
-	These three options should satisfy every needs.
+	These four options should satisfy every needs.
 	
 	\subsection{Reversing the sort algorithm} \label{ssec:sort-reverse}
-	The reverse keys serves to reverse the ordering of the terms by the sorting algorithms. This allows for even greater flexibility over the sorting method. So if the default ordering of an algorithm is not wished it may be reversed with the corresponding reverse key. For example, the \val{sign} algorithm places the positive terms before the negative terms, but is opposite with \keyval{sort-sign-reverse}{true}. The reverse keys in action are shown below (\keyval[index=false]{sort-method}{\meta{1 algorithm only}} is also used to better show off the reverse functionality)
+	The reverse keys serves to reverse the ordering of the sorting algorithms. This allows for even greater flexibility over the sorting method. So if the default ordering of an algorithm is not wished it may be reversed with the corresponding reverse key. The reverse keys in action are shown below (\keyval[index=false]{sort-method}{\meta{1 algorithm only}} is also used to better show off the reverse functionality)
 	\begin{align*}
-		\text{\inlinecode{sort-abs-reverse=false:}}    && \pdv[sort-method={abs}, sort-abs-reverse=false, order={2a, -3b}]{f}{x,y}       &&
-		\text{\inlinecode{sort-abs-reverse=true:}}     && \pdv[sort-method={abs}, sort-abs-reverse=true, order={2a, -3b}]{f}{x,y}        \\
-		\text{\inlinecode{sort-number-reverse=false:}} && \pdv[sort-method={number}, sort-number-reverse=false, order={2a, -3b}]{f}{x,y} &&
-		\text{\inlinecode{sort-number-reverse=true:}}  && \pdv[sort-method={number}, sort-number-reverse=true, order={2a, -3b}]{f}{x,y}  \\
-		\text{\inlinecode{sort-sign-reverse=false:}}   && \pdv[sort-method={sign}, sort-sign-reverse=false, order={a, -b}]{f}{x,y}       &&
-		\text{\inlinecode{sort-sign-reverse=true:}}    && \pdv[sort-method={sign}, sort-sign-reverse=true, order={a, -b}]{f}{x,y}        \\
-		\text{\inlinecode{sort-symbol-reverse=false:}} && \pdv[sort-method={symbol}, sort-symbol-reverse=false, order={ab, c}]{f}{x,y}   &&
-		\text{\inlinecode{sort-symbol-reverse=true:}}  && \pdv[sort-method={symbol}, sort-symbol-reverse=true, order={ab, c}]{f}{x,y}
+		\text{\inlinecode{sort-abs-reverse=false:}}     && \pdv[sort-method={abs}, sort-abs-reverse=false, order={2a, -3b}]{f}{x,y}       &&
+		\text{\inlinecode{sort-abs-reverse=true:}}      && \pdv[sort-method={abs}, sort-abs-reverse=true, order={2a, -3b}]{f}{x,y}        \\
+		\text{\inlinecode{sort-number-reverse=false:}}  && \pdv[sort-method={number}, sort-number-reverse=false, order={2a, -3b}]{f}{x,y} &&
+		\text{\inlinecode{sort-number-reverse=true:}}   && \pdv[sort-method={number}, sort-number-reverse=true, order={2a, -3b}]{f}{x,y}  \\
+		\text{\inlinecode{sort-sign-reverse=false:}}    && \pdv[sort-method={sign}, sort-sign-reverse=false, order={a, -b}]{f}{x,y}       &&
+		\text{\inlinecode{sort-sign-reverse=true:}}     && \pdv[sort-method={sign}, sort-sign-reverse=true, order={a, -b}]{f}{x,y}        \\
+		\text{\inlinecode{sort-symbol-reverse=false:}}  && \pdv[sort-method={symbol}, sort-symbol-reverse=false, order={ab, c}]{f}{x,y}   &&
+		\text{\inlinecode{sort-symbol-reverse=true:}}   && \pdv[sort-method={symbol}, sort-symbol-reverse=true, order={ab, c}]{f}{x,y}    \\
+		\text{\inlinecode{sort-lexical-reverse=false:}} && \pdv[sort-method={lexical}, sort-lexical-reverse=false, order={a, c, b}]{f}{x,y,z}  &&
+		\text{\inlinecode{sort-lexical-reverse=true:}}  && \pdv[sort-method={lexical}, sort-lexical-reverse=true, order={a, c, b}]{f}{x,y,z}   \\
 	\end{align*}
 	
 	\subsection{Mixed order override}
@@ -2632,6 +2665,13 @@ indent_length "2"
 			\item The package no longer uses \cs{symup} which have been replaced with \cs{mathrm} for simplicity
 			\item If \pkg{mleftright} is loaded then the default value of \key[index=false]{scale-auto} is \val{mleftmright}
 		\end{change}
+		\begin{change}[version = 1.2, date = 2022-07-09, beta = false]
+			\item Code clean-up and optimisation that significantly speeds up usage of the package
+			\item Added new sorting algorithm \keyval[index=false]{sort-method}{lexical} that sorts terms alphabetically
+			\item Added the option \key[index=false]{sort-lexical-reverse} 
+			\item Added the option \key[index=false]{switch-sort} that turns on/off the sorting algorithm of the mixed order
+			\item Fixed bug concerning \keyval[index=false]{scale-\meta{\dots}}{none} when the corresponding delimiter option contained a period.
+			\item Fixed documentation errors
+		\end{change}
 	\end{changelog}
-	
 \end{document}
