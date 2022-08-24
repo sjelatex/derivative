@@ -143,7 +143,8 @@
 	style-inf     = d,
 	style-frac    = \frac,
 	style-frac-/  = \slashfrac,
-	style-var     = single,
+	style-var     = {single-up},
+	style-var-*   = {multiple-right},
 	scale-eval    = auto,
 	scale-eval-/  = auto,
 	scale-fun     = auto,
@@ -164,12 +165,15 @@
 	sep-var-ord   = 0,
 	sep-var-inf   = \mathop{}\!,
 	sep-ord-inf   = \mathop{}\!,
+	sep-ord-ord   = {,},
+	sep-ord-var   = 0,
 	sep-var-var   = {,},
 	sep-eval-sb   = 0,
 	sep-eval-sp   = 0,
 	switch-*      = false,
 	switch-/      = false,
 	switch-sort   = true,
+	switch-compact= false,
 	sort-method         = {sign, symbol, abs},
 	sort-numerical      = auto,
 	sort-abs-reverse    = false,
@@ -234,7 +238,8 @@
 	\keys_define:nn { deriv/dv/#1 }
 	{
 		style-inf    .tl_set:c  = { l__deriv_dv_#1_style_inf_tl },
-		style-var    .code:n    = { \__deriv_set_style_var:nn {#1} {##1} },
+		style-var    .code:n    = { \__deriv_set_style_var:nnn {#1} {##1} {} },
+		style-var-*  .code:n    = { \__deriv_set_style_var:nnn {#1} {##1} {_star} },
 		style-frac   .cs_set:cp = { __deriv_dv_#1_style_frac:nn } {##1},
 		style-frac-/ .cs_set:cp = { __deriv_dv_#1_style_frac_slash:nn } {##1},
 		
@@ -260,6 +265,8 @@
 		sep-var-ord  .code:n = { \__deriv_set_rubber_length:cn { l__deriv_dv_#1_sep_var_ord_tl  } {##1} },
 		sep-var-inf  .code:n = { \__deriv_set_rubber_length:cn { l__deriv_dv_#1_sep_var_inf_tl  } {##1} },
 		sep-ord-inf  .code:n = { \__deriv_set_rubber_length:cn { l__deriv_dv_#1_sep_ord_inf_tl  } {##1} },
+		sep-ord-ord  .code:n = { \__deriv_set_rubber_length:cn { l__deriv_dv_#1_sep_ord_ord_tl  } {##1} },
+		sep-ord-var  .code:n = { \__deriv_set_rubber_length:cn { l__deriv_dv_#1_sep_ord_var_tl  } {##1} },
 		sep-var-var  .code:n = { \__deriv_set_rubber_length:cn { l__deriv_dv_#1_sep_var_var_tl  } {##1} },
 		sep-eval-sb  .code:n = { \__deriv_set_rubber_length:cn { l__deriv_dv_#1_sep_eval_sb_tl  } {##1} },
 		sep-eval-sp  .code:n = { \__deriv_set_rubber_length:cn { l__deriv_dv_#1_sep_eval_sp_tl  } {##1} },
@@ -267,6 +274,8 @@
 		switch-* .bool_set:c = { l__deriv_dv_#1_switch_star_bool },
 		switch-/ .bool_set:c = { l__deriv_dv_#1_switch_slash_bool },
 		switch-sort .bool_set:c = { l__deriv_dv_#1_switch_sort_bool },
+		switch-compact .bool_set:c = { l__deriv_dv_#1_switch_compact_bool },
+
 		
 		fun  .bool_set:c = { l__deriv_dv_#1_misc_fun_bool },
 		frac .bool_set:c = { l__deriv_dv_#1_misc_frac_bool },
@@ -305,13 +314,20 @@
 		\int_compare:nNnT {##1} = { 3 } { \seq_map_break: }
 	}
 }
-% variant, value
-\cs_new:Npn \__deriv_set_style_var:nn #1 #2
+% variant, value, name
+\cs_new:Npn \__deriv_set_style_var:nnn #1 #2 #3
 {
-	\str_case:nn {#2}
+	\str_case:nnF {#2}
 	{
-		{ single   } { \tl_set:cn { l__deriv_dv_#1_style_var_tl } { \__deriv_dv_build_single:NNNn   } }
-		{ multiple } { \tl_set:cn { l__deriv_dv_#1_style_var_tl } { \__deriv_dv_build_multiple:NNNn } }
+		{ single-up      } { \tl_set:cn { l__deriv_dv_#1_style_var#3_tl } { \__deriv_dv_build_single:NNNnn   } }
+		{ single-low     } { \tl_set:cn { l__deriv_dv_#1_style_var#3_tl } { \__deriv_i_build_single:NNNnn   } }
+		{ multiple-right } { \tl_set:cn { l__deriv_dv_#1_style_var#3_tl } { \__deriv_dv_build_multiple:NNNnn } }
+		{ multiple-left  } { \tl_set:cn { l__deriv_dv_#1_style_var#3_tl } { \__deriv_i_build_multiple:NNNnn } }
+		{ mixed          } { \tl_set:cn { l__deriv_dv_#1_style_var#3_tl } { \__deriv_i_build_mixed:NNNnn    } }
+	}
+	{ 
+		\msg_error:nnxx { deriv } { differential-option-not-defined } 
+		{#2} {'#2'}
 	}
 }
 % varaint, value, name
@@ -468,11 +484,11 @@
 % variant
 \cs_new_protected:Npn \__deriv_dv_variables:n #1
 {
-	\__deriv_new:nnnn { tl    } {dv_#1} { style  } { inf, var, frac, frac_slash }
+	\__deriv_new:nnnn { tl    } {dv_#1} { style  } { inf, var, var_star, frac, frac_slash }
 	\__deriv_new:nnnn { tl    } {dv_#1} { scale  } { eval, eval_slash, fun, var, frac, frac_slash }
 	\__deriv_new:nnnn { tl    } {dv_#1} { delims } { eval, eval_slash, fun, var, frac, frac_slash }
-	\__deriv_new:nnnn { tl    } {dv_#1} { sep    } { inf_ord, inf_fun, ord_fun, frac_fun, inf_var, var_ord, var_inf, ord_inf, eval_sb, eval_sp }
-	\__deriv_new:nnnn { bool  } {dv_#1} { switch } { star, slash, sort }
+	\__deriv_new:nnnn { tl    } {dv_#1} { sep    } { inf_ord, inf_fun, ord_fun, frac_fun, inf_var, var_ord, var_var, var_inf, ord_ord, ord_inf, ord_var, eval_sb, eval_sp }
+	\__deriv_new:nnnn { bool  } {dv_#1} { switch } { star, slash, compact, sort }
 	\__deriv_new:nnnn { seq   } {dv_#1} { sort   } { method }
 	\__deriv_new:nnnn { tl    } {dv_#1} { sort   } { numerical }
 	\__deriv_new:nnnn { bool  } {dv_#1} { sort   } { abs_reverse, sign_reverse, symbol_reverse, number_reverse, lexical_reverse }
@@ -521,16 +537,52 @@
 	\group_begin:
 		\deriv_local_keys:nnn {##2} { dv } {#2}
 		
-		\exp_args:Nnc \bool_xor:nnTF {##4} { l__deriv_dv_#2_switch_slash_bool }
-		{
-			\exp_args:Nnc \bool_xor:nnTF {##1} { l__deriv_dv_#2_switch_star_bool }
-			{ \__deriv_dv_both:nnnnn  {dv_#2} {##3} {##5} {##6} {##7} }
-			{ \__deriv_dv_slash:nnnnn {dv_#2} {##3} {##5} {##6} {##7} }
+		\exp_args:Nc \bool_if:nTF {l__deriv_dv_#2_switch_compact_bool}
+		{%compact = true
+			\exp_args:Nnc \bool_xor:nnTF {##4} { l__deriv_dv_#2_switch_slash_bool }
+			{% slash = true
+				\exp_args:Nnc \bool_xor:nnTF {##1} { l__deriv_dv_#2_switch_star_bool }
+				{% star and slash + compact
+					\msg_error:nnxx { deriv } { differential-options-incompatible } 
+					{'slash','star'~and~'compact'} {'slash','star'~and~'compact'}
+					\__deriv_dv_both:nnnnn  {dv_#2} {##3} {##5} {##6} {##7} 
+				}
+				{% slash only + compact
+					\msg_error:nnxx { deriv } { differential-options-incompatible } 
+					{'slash'~and~'compat'} {'slash'~and~'compact'}
+					\__deriv_dv_slash:nnnnn {dv_#2} {##3} {##5} {##6} {##7} 
+				}
+			}
+			{% slash = false
+				\exp_args:Nnc \bool_xor:nnTF {##1} { l__deriv_dv_#2_switch_star_bool }
+				{% star only + compact
+					\__deriv_dv_compact_star:nnnnn {dv_#2} {##3} {##5} {##6} {##7} 
+				}
+				{% no star no slash + compact
+					\__deriv_dv_compact:nnnnn {dv_#2} {##3} {##5} {##6} {##7} 
+				}
+			}
 		}
-		{
-			\exp_args:Nnc \bool_xor:nnTF {##1} { l__deriv_dv_#2_switch_star_bool }
-			{ \__deriv_dv_star:nnnnn {dv_#2} {##3} {##5} {##6} {##7} }
-			{ \__deriv_dv_none:nnnnn {dv_#2} {##3} {##5} {##6} {##7} }
+		{% compact = false
+			\exp_args:Nnc \bool_xor:nnTF {##4} { l__deriv_dv_#2_switch_slash_bool }
+			{% slash = true
+				\exp_args:Nnc \bool_xor:nnTF {##1} { l__deriv_dv_#2_switch_star_bool }
+				{% star and slash 
+					\__deriv_dv_both:nnnnn  {dv_#2} {##3} {##5} {##6} {##7} 
+				}
+				{% slash only
+					\__deriv_dv_slash:nnnnn {dv_#2} {##3} {##5} {##6} {##7} 
+				}
+			}
+			{% slash = false
+				\exp_args:Nnc \bool_xor:nnTF {##1} { l__deriv_dv_#2_switch_star_bool }
+				{% star only  
+					\__deriv_dv_star:nnnnn {dv_#2} {##3} {##5} {##6} {##7} 
+				}
+				{% no star no slash
+					\__deriv_dv_none:nnnnn {dv_#2} {##3} {##5} {##6} {##7} 
+				}
+			}
 		}
 	\group_end:
 	}
@@ -609,6 +661,28 @@
 		}
 	}
 }
+% variant, function, variable, sb-point, sp-point
+\cs_new_protected:Npn \__deriv_dv_compact:nnnnn #1 #2 #3 #4 #5
+{
+	\__deriv_dv_preparation:Nnnn \l__deriv_dv_denom_tl {#1} {#3} {}
+	
+	\__deriv_evaluation:nnnn {#1} {#4} {#5}
+	{
+		\l__deriv_dv_denom_tl 
+		\__deriv_dv_no_numerator_fun:nn {#1} {#2}
+	}
+}
+% variant, function, variable, sb-point, sp-point
+\cs_new_protected:Npn \__deriv_dv_compact_star:nnnnn #1 #2 #3 #4 #5
+{
+	\__deriv_dv_preparation:Nnnn \l__deriv_dv_denom_tl {#1} {#3} {_star}
+	
+	\__deriv_evaluation:nnnn {#1} {#4} {#5}
+	{
+		\l__deriv_dv_denom_tl 
+		\__deriv_dv_no_numerator_fun:nn {#1} {#2}
+	}
+}
 % variant, function
 \cs_new_protected:Npn \__deriv_dv_numerator_fun:nn #1 #2
 {
@@ -619,6 +693,11 @@
 		\__deriv_insert_fun:nnn {#1} {#2} { ord_fun }
 	}
 	{ \__deriv_insert_fun:nnn {#1} {#2} { inf_fun } }
+}
+% variant, function
+\cs_new_protected:Npn \__deriv_dv_no_numerator_fun:nn #1 #2
+{
+	\__deriv_insert_fun:nnn {#1} {#2} { ord_fun }
 }
 % variant
 \cs_new_protected:Npn \__deriv_dv_numerator_nofun:n #1
@@ -904,14 +983,7 @@
 		{#2}
 	}
 }
-% if delim, variable, variant
-\cs_new:Npn \__deriv_insert_var:Nnn #1 #2 #3
-{
-	\bool_if:NTF #1
-	{ \__deriv_add_delims:nnn {#3} { var } {#2} }
-	{ \__deriv_handle_double_sp:n {#2} }
-}
-% if delim, variable, variant, star
+% if delim, variable, variant, if star
 \cs_new:Npn \__deriv_insert_var:Nnnn #1 #2 #3 #4
 {
 	\bool_if:NTF #1
@@ -1405,7 +1477,7 @@
 \cs_generate_variant:Nn \__deriv_scale_big_auxi:nNn { nc }
 
 \cs_generate_variant:Nn \__deriv_insert_ord:Nnn { c }
-\cs_generate_variant:Nn \__deriv_insert_var:Nnn { NV }
+\cs_generate_variant:Nn \__deriv_insert_var:Nnnn { NV }
 
 \cs_generate_variant:Nn \__deriv_mixed_order:NNn { c }
 \cs_generate_variant:Nn \__deriv_sort_method:Nn { c }
@@ -1439,12 +1511,16 @@
 { The~key~'#1'~only~accepts~the~values~'true'~and~'false'. }
 
 \msg_new:nnnn { deriv } { derivative-option-not-defined }
-{ Derivative option~'#1'~not~yet~defined! }
+{ Derivative~option~'#1'~not~yet~defined! }
 { You~have~used~#2~with~a~derivative~option~that~was~never~defined. }
 
 \msg_new:nnnn { deriv } { differential-option-not-defined }
-{ Differential option~'#1'~not~yet~defined! }
+{ Differential~option~'#1'~not~yet~defined! }
 { You~have~used~#2~with~a~differential~option~that~was~never~defined. }
+
+\msg_new:nnnn { deriv } { differential-options-incompatible }
+{ Differential~options~#1~are~not~compatible! }
+{ You~have~used~#2~options~that~are~incompatible. }
 
 %%%%%  Declaring derivatives  %%%%%
 
@@ -1470,7 +1546,7 @@
 \DeclareDerivative{\fdv}{\delta}
 \DeclareDerivative{\adv}{\Delta}
 \DeclareDerivative{\jdv}{\partial}[fun=true, var=1]
-\DeclareDerivative{\pdv}{\partial}[style-var=multiple, sep-inf-ord=1, delims-eval=(), delims-eval-/=()]
+\DeclareDerivative{\pdv}{\partial}[style-var=multiple-right, style-var-*=mixed, sep-inf-ord=1, delims-eval=(), delims-eval-/=()]
 
 \DeclareDifferential{\fdif}{\delta}
 \DeclareDifferential{\adif}{\Delta}
