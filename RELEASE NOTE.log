@@ -1,0 +1,53 @@
+ADDED
+ * Support for fractional calculus
+ * Added option style-inf-denom
+
+CHANGED
+ * 
+
+REMOVED
+ * 
+
+FIXED
+ * Documentation errors
+
+
+expl3 version
+2021-11-07 prop_put/const_from_keyval
+2021-05-17 str_compare
+
+
+
+
+
+
+
+
+
+
+
+
+
+	\exp_args:Nv \str_case:nn { l__deriv_#4_style_var_tl }
+	{
+		{ single   } { \__deriv_dv_build_single:NNNn   #1 #2 #3 {#4} }
+		{ multiple } { \__deriv_dv_build_multiple:NNNn #1 #2 #3 {#4} }
+	}
+
+	\exp_args:Nv \str_case:nn { l__deriv_#4_style_notation#5_tl }
+	{
+		{ single   } { \__deriv_i_build_single:NNNnn   #1 #2 #3 {#4} {#5} }
+		{ multiple } { \__deriv_i_build_multiple:NNNnn #1 #2 #3 {#4} {#5} }
+		{ mixed    } { \__deriv_i_build_mixed:NNNnn    #1 #2 #3 {#4} {#5} }
+	}
+
+	\exp_args:Nv \str_case:nnF { l__deriv_#1_scale_#2_tl }
+	{
+		{ auto } { \__deriv_scale_auto:nnn {#1} {#2} {#3} }
+		{ none } { \__deriv_scale_none:nnn {#1} {#2} {#3} }
+	}
+	{ \__deriv_scale_big:nnn {#1} {#2} {#3} }
+
+
+
+
