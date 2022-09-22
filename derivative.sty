@@ -1251,9 +1251,6 @@
 	{ \tl_if_eq:nnT {#3} {##2} { \seq_map_break:n { \int_set:Nn #2 {##1} } } }
 }
 
-\cs_set_eq:NN \__deriv_update_seq:Nnn \seq_set_item:Nnn
-\cs_generate_variant:Nn \__deriv_update_seq:Nnn { NVV }
-
 \cs_new_protected:Npn \__deriv_update_seq:NNNNn #1 #2 #3 #4 #5
 { \__deriv_addfrac:NNVVxxn #1 #2 #3 #4 { \seq_item:Nn #1 {#5} } { \seq_item:Nn #2 {#5} } {#5} }
 
