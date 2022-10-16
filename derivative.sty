@@ -117,7 +117,6 @@
 \tl_new:N \l__deriv_cs_name_tl
 \tl_new:N \l__deriv_derivset_tl
 
-\tl_new:N \l__deriv_swap_tmp_tl
 \tl_new:N \l__deriv_gcd_result_tl
 \tl_new:N \l__deriv_gcd_remain_tl
 \int_new:N \l__deriv_gcd_counter_int
@@ -145,6 +144,7 @@
 \tl_new:N \l__deriv_input_tl
 
 \seq_new:N \l__deriv_input_seq
+\seq_new:N \l__deriv_extract_seq
 \seq_new:N \l__deriv_permutation_seq
 \seq_new:N \l__deriv_sorted_seq
 \seq_new:N \l__deriv_symbol_seq
@@ -1135,19 +1135,25 @@
 
 \cs_new:Npn \__deriv_combine_frac:NNNNNN #1 #2 #3 #4 #5 #6
 {
+	(\seq_count:N #3 {:} \seq_use:Nn #3 { | })
+	(\seq_count:N #4 {:} \seq_use:Nn #4 { | })
+	(\seq_count:N #5 {:} \seq_use:Nn #5 { | })
+	(\seq_count:N #6 {:} \seq_use:Nn #6 { | })
+	
+	\tl_set:Nn \l__deriv_num_tmpa_tl { 0 }
+	\tl_set:Nn \l__deriv_num_tmpb_tl { 1 }
+	
 	\int_step_inline:nn { \seq_count:N #3 }
-	{
+	{p
 		\tl_set:Nx \l__deriv_tmpa_tl { \seq_item:Nn #3 {##1} }
 		\tl_set:Nx \l__deriv_tmpb_tl { \seq_item:Nn #4 {##1} }
 		\int_set:Nn \l__deriv_tmpa_int { \seq_item:Nn #5 {##1} }
 		\int_set:Nn \l__deriv_tmpb_int { \seq_item:Nn #6 {##1} }
-		\tl_set:Nn \l__deriv_num_tmpa_tl { 0 }
-		\tl_set:Nn \l__deriv_num_tmpb_tl { 1 }
 
 		\__deriv_adjust_frac_integers:NN \l__deriv_tmpa_int \l__deriv_tmpb_int
 		
 		\tl_if_eq:NNTF \l__deriv_tmpa_tl \l__deriv_tmpb_tl % no symbolic part
-		{
+		{q
 			\tl_set:NV \l__deriv_num_tmpa_tl \l__deriv_tmpa_int
 			\tl_set:NV \l__deriv_num_tmpb_tl \l__deriv_tmpb_int
 		}
@@ -1174,7 +1180,7 @@
 	\int_compare:nNnTF \l__deriv_tmpb_int = 1
 	{ \tl_set:NV \l__deriv_numerical_tl \l__deriv_tmpa_int }
 	{ \tl_set:Nx \l__deriv_numerical_tl { \int_use:N \l__deriv_tmpa_int / \int_use:N \l__deriv_tmpb_int } }
-		
+	
 	\int_compare:nNnTF \l__deriv_seq_pos_int = 0
 	{ \__deriv_add_to_seq:NNnV #1 #2 {} \l__deriv_numerical_tl }
 	{ \exp_args:NNVV \seq_set_item:Nnn #2 \l__deriv_seq_pos_int \l__deriv_numerical_tl }
@@ -1250,6 +1256,9 @@
 	\seq_map_indexed_inline:Nn #1
 	{ \tl_if_eq:nnT {#3} {##2} { \seq_map_break:n { \int_set:Nn #2 {##1} } } }
 }
+
+\cs_set_eq:NN \__deriv_update_seq:Nnn \seq_set_item:Nnn
+\cs_generate_variant:Nn \__deriv_update_seq:Nnn { NVV }
 
 \cs_new_protected:Npn \__deriv_update_seq:NNNNn #1 #2 #3 #4 #5
 { \__deriv_addfrac:NNVVxxn #1 #2 #3 #4 { \seq_item:Nn #1 {#5} } { \seq_item:Nn #2 {#5} } {#5} }
@@ -1451,13 +1460,6 @@
 	{ \prg_return_false: }
 }
 
-\cs_new_protected:Npn \binary_if_zero:NN #1 #2
-{
-	\tl_if_in:NnTF #1 { 1 }
-	{ \bool_set_false:N #2 }
-	{ \bool_set_true:N  #2 }
-}
-
 \cs_new:Npn \deriv_gcd:NN #1 #2
 {
 	\int_compare:nNnTF #1 = 0
@@ -1496,15 +1498,12 @@
 	\bool_while_do:nn { \binary_if_even_p:N #1 }
 	{ \binary_shift_right:N #1 }
 	
-	\binary_if_zero:NN #2 \l__deriv_gcd_bool
-	\bool_until_do:nn \l__deriv_gcd_bool
+	\bool_until_do:nn { \int_compare_p:nNn #2 = 0 }
 	{
 		\bool_while_do:nn { \binary_if_even_p:N #2 }
 		{ \binary_shift_right:N #2 }
 		
 		\__deriv_gcd_swap_helper:NNff #1 #2 { \int_from_bin:V #1 } { \int_from_bin:V #2 }
-		
-		\binary_if_zero:NN #2 \l__deriv_gcd_bool
 	}
 	\binary_shift_left:NV #1 \l__deriv_gcd_counter_int
 	\tl_set:Nx #1 { \int_from_bin:V #1 }
@@ -1513,16 +1512,10 @@
 {
 	\int_compare:nNnTF {#3} > {#4}
 	{
-		\deriv_swap_tl:NN #1 #2
+		\tl_set_eq:NN #1 #2
 		\tl_set:Nx #2 { \int_to_bin:n { #3 - #4 } }
 	}
 	{ \tl_set:Nx #2 { \int_to_bin:n { #4 - #3 } } }
-}
-\cs_new:Npn \deriv_swap_tl:NN #1 #2
-{
-	\tl_set_eq:NN \l__deriv_swap_tmp_tl #1
-	\tl_set_eq:NN #1 #2
-	\tl_set_eq:NN #2 \l__deriv_swap_tmp_tl
 }
 %%%%%  Declaring Variant  %%%%%
 
