@@ -198,11 +198,11 @@
 	switch-sort   = true,
 	sort-method         = {sign, symbol, abs},
 	sort-numerical      = auto,
-	sort-abs-reverse    = true,
-	sort-number-reverse = true,
-	sort-sign-reverse   = true,
-	sort-symbol-reverse = true,
-	sort-lexical-reverse = true,
+	sort-abs-reverse    = false,
+	sort-number-reverse = false,
+	sort-sign-reverse   = false,
+	sort-symbol-reverse = false,
+	sort-lexical-reverse = false,
 	fun   = false,
 	frac  = false,
 	var   = none,
@@ -1316,13 +1316,13 @@
 \cs_new_protected:Npn \__deriv_sort_sign:n #1
 {
 	\tl_if_head_eq_charcode:VNTF \l__deriv_num_tmpb_tl -
-	{a
+	{
 		\tl_if_head_eq_charcode:VNF \l__deriv_num_tmpa_tl -
-		{b \__deriv_sort_reverse:Nnn \c_false_bool {#1} { sign } }
+		{ \__deriv_sort_reverse:Nnn \c_false_bool {#1} { sign } }
 	}
-	{c
+	{
 		\tl_if_head_eq_charcode:VNT \l__deriv_num_tmpa_tl -
-		{d \__deriv_sort_reverse:Nnn \c_true_bool {#1} { sign } }
+		{ \__deriv_sort_reverse:Nnn \c_true_bool {#1} { sign } }
 	}
 }
 % dv
@@ -1332,10 +1332,10 @@
 	\int_set:Nn \l__deriv_tmpb_int { \tl_count:N \l__deriv_sym_tmpb_tl }
 	
 	\int_compare:nNnTF \l__deriv_tmpa_int > \l__deriv_tmpb_int
-	{e \__deriv_sort_reverse:Nnn \c_false_bool {#1} { symbol } }
-	{f
+	{ \__deriv_sort_reverse:Nnn \c_false_bool {#1} { symbol } }
+	{
 		\int_compare:nNnT \l__deriv_tmpa_int < \l__deriv_tmpb_int
-		{g \__deriv_sort_reverse:Nnn \c_true_bool {#1} { symbol } }
+		{ \__deriv_sort_reverse:Nnn \c_true_bool {#1} { symbol } }
 	}
 }
 % dv
@@ -1345,10 +1345,10 @@
 \cs_new_protected:Npn \__deriv_sort_lexical_auxi:nnn #1 #2 #3
 {
 	\str_compare:nNnTF {#1} < {#2}
-	{h \__deriv_sort_reverse:Nnn \c_false_bool {#3} { lexical } }
-	{i
+	{ \__deriv_sort_reverse:Nnn \c_false_bool {#3} { lexical } }
+	{
 		\str_compare:nNnT {#1} > {#2}
-		{j \__deriv_sort_reverse:Nnn \c_true_bool {#3} { lexical } }
+		{ \__deriv_sort_reverse:Nnn \c_true_bool {#3} { lexical } }
 	}
 }
 % dv
@@ -1358,20 +1358,20 @@
 	\int_set:Nn \l__deriv_tmpb_int { \int_abs:n \l__deriv_num_tmpb_tl }
 	
 	\int_compare:nNnTF \l__deriv_tmpa_int > \l__deriv_tmpb_int
-	{k \__deriv_sort_reverse:Nnn \c_false_bool {#1} { abs } }
-	{l
+	{ \__deriv_sort_reverse:Nnn \c_false_bool {#1} { abs } }
+	{
 		\int_compare:nNnT \l__deriv_tmpa_int < \l__deriv_tmpb_int
-		{m \__deriv_sort_reverse:Nnn \c_true_bool {#1} { abs } }
+		{ \__deriv_sort_reverse:Nnn \c_true_bool {#1} { abs } }
 	}
 }
 % dv
 \cs_new_protected:Npn \__deriv_sort_number:n #1
 {
 	\int_compare:nNnTF \l__deriv_num_tmpa_tl > \l__deriv_num_tmpb_tl
-	{n \__deriv_sort_reverse:Nnn \c_false_bool {#1} { number } }
-	{o
+	{ \__deriv_sort_reverse:Nnn \c_false_bool {#1} { number } }
+	{
 		\int_compare:nNnT \l__deriv_num_tmpa_tl < \l__deriv_num_tmpb_tl
-		{p \__deriv_sort_reverse:Nnn \c_true_bool {#1} { number } }
+		{ \__deriv_sort_reverse:Nnn \c_true_bool {#1} { number } }
 	}
 }
 % true/false, dv, sort-method
@@ -1700,8 +1700,6 @@
 \DeclareDifferential{\fdif}{\delta}
 \DeclareDifferential{\adif}{\Delta}
 \DeclareDifferential{\pdif}{\partial}[style-notation=single, style-notation-*=mixed]
-
-\DeclareDerivative{\qdv}{\nabla}[style-inf-denom=\mathrm{d}]
 
 \endinput
 
