@@ -81,6 +81,23 @@
 	{ \prg_return_true:  }
 }
 
+\prg_new_protected_conditional:Npnn \__deriv_if_in_two_seq:NNNN #1 #2 #3 #4 { TF }
+{
+	\int_zero:N \l__deriv_seq_pos_int
+	\seq_map_indexed_inline:Nn #1
+	{
+		\str_if_eq:VnT #3 {##2} %todo choose correct check
+		{
+			\tl_set:Nf \l__deriv_tmpa_tl { \seq_item:Nn #2 {##1} }
+			\tl_if_eq:NNT #4 \l__deriv_tmpa_tl
+			{ \seq_map_break:n { \int_set:Nn \l__deriv_seq_pos_int {##1} } }
+		}
+	}
+	\int_compare:nNnTF \l__deriv_seq_pos_int = 0
+	{ \prg_return_false: }
+	{ \prg_return_true:  }
+}
+
 %%%%%  Variables: derivatives  %%%%%
 
 \tl_new:N \l__deriv_dv_denom_tl
@@ -99,12 +116,18 @@
 \seq_new:N \l__deriv_i_variant_seq
 
 %%%%%  Variables: other  %%%%%
+
 \tl_new:N \l__deriv_cs_name_tl
 \tl_new:N \l__deriv_derivset_tl
+
+\tl_new:N \l__deriv_gcd_result_tl
+\tl_new:N \l__deriv_gcd_remain_tl
+\int_new:N \l__deriv_gcd_counter_int
 
 \tl_new:N \l__deriv_tmpa_tl
 \tl_new:N \l__deriv_tmpb_tl
 \tl_new:N \l__deriv_tmpc_tl
+\tl_new:N \l__deriv_tmpd_tl
 \seq_new:N \l__deriv_tmpa_seq
 
 \seq_new:N \l__deriv_new_var_seq
@@ -112,6 +135,11 @@
 \seq_new:N \l__deriv_add_var_bool_seq
 
 \int_new:N \l__deriv_vmo_int
+
+\seq_new:N \l__deriv_num_tmpa_seq
+\seq_new:N \l__deriv_num_tmpb_seq
+\seq_new:N \l__deriv_sym_tmpa_seq
+\seq_new:N \l__deriv_sym_tmpb_seq
 
 \tl_new:N \l__deriv_sym_tmpa_tl
 \tl_new:N \l__deriv_num_tmpa_tl
@@ -130,11 +158,12 @@
 \int_new:N \l__deriv_tmpa_int
 \int_new:N \l__deriv_tmpb_int
 
-\int_new:N \l__deriv_numerical_int
+\tl_new:N \l__deriv_numerical_tl
+\int_new:N \l__deriv_seq_pos_int
 \int_new:N \l__deriv_sort_max_int
 
 \regex_const:Nn \c__deriv_cs_numbers_regex { \A\-?\d+(?:,\d+){0,2}\Z }
-\tl_const:Nn \c__deriv_digits_tl {-1234567890}
+\tl_const:Nn \c__deriv_digits_tl {123456789-0}
 
 
 % numerator, denumerator
@@ -144,7 +173,8 @@
 %%%%%  default values  %%%%%
 \prop_const_from_keyval:Nn \c__deriv_dv_pkg_keys_prop
 {
-	style-inf     = d,
+	style-inf       = d,
+	style-inf-denom = d,
 	style-frac    = \frac,
 	style-frac-/  = \slashfrac,
 	style-frac-/! = \slashfrac,
@@ -193,9 +223,9 @@
 	sort-sign-reverse   = false,
 	sort-symbol-reverse = false,
 	sort-lexical-reverse = false,
-	fun = false,
-	frac = false,
-	var = none,
+	fun   = false,
+	frac  = false,
+	var   = none,
 	order = 1,
 	mixed-order = 1
 }
@@ -251,7 +281,8 @@
 {
 	\keys_define:nn { deriv/dv/#1 }
 	{
-		style-inf    .tl_set:c  = { l__deriv_dv_#1_style_inf_tl },
+		style-inf       .tl_set:c  = { l__deriv_dv_#1_style_inf_tl },
+		style-inf-denom .tl_set:c  = { l__deriv_dv_#1_style_inf_denom_tl },
 		style-var    .code:n    = { \__deriv_set_style_var:nnn {dv_#1} {##1} {} },
 		style-var-*  .code:n    = { \__deriv_set_style_var:nnn {dv_#1} {##1} {_star} },
 		style-var-/  .code:n    = { \__deriv_set_style_var:nnn {dv_#1} {##1} {_slash} },
@@ -341,12 +372,12 @@
 {
 	\str_case:nnF {#2}
 	{
-		{ single-single  } { \tl_set:cn { l__deriv_#1_style_var#3_tl } { \__deriv_build_var_single_single:NNNnn } }
-		{ single-right   } { \tl_set:cn { l__deriv_#1_style_var#3_tl } { \__deriv_build_var_single_right:NNNnn } }
-		{ single-mixed   } { \tl_set:cn { l__deriv_#1_style_var#3_tl } { \__deriv_build_var_single_mixed:NNNnn } }
-		{ multiple-right } { \tl_set:cn { l__deriv_#1_style_var#3_tl } { \__deriv_build_var_multiple_right:NNNnn } }
-		{ multiple-left  } { \tl_set:cn { l__deriv_#1_style_var#3_tl } { \__deriv_build_var_multiple_left:NNNnn } }
-		{ multiple-mixed } { \tl_set:cn { l__deriv_#1_style_var#3_tl } { \__deriv_build_var_multiple_mixed:NNNnn } }
+		{ single-single  } { \tl_set:cn { l__deriv_#1_style_var#3_tl } { \__deriv_build_var_single_single:NNNnnn } }
+		{ single-right   } { \tl_set:cn { l__deriv_#1_style_var#3_tl } { \__deriv_build_var_single_right:NNNnnn } }
+		{ single-mixed   } { \tl_set:cn { l__deriv_#1_style_var#3_tl } { \__deriv_build_var_single_mixed:NNNnnn } }
+		{ multiple-right } { \tl_set:cn { l__deriv_#1_style_var#3_tl } { \__deriv_build_var_multiple_right:NNNnnn } }
+		{ multiple-left  } { \tl_set:cn { l__deriv_#1_style_var#3_tl } { \__deriv_build_var_multiple_left:NNNnnn } }
+		{ multiple-mixed } { \tl_set:cn { l__deriv_#1_style_var#3_tl } { \__deriv_build_var_multiple_mixed:NNNnnn } }
 	}
 	{ 
 		\msg_error:nnxx { deriv } { differential-option-not-defined } 
@@ -474,9 +505,18 @@
 \cs_new_protected:Npn \deriv_preamble:NNnnn #1 #2 #3 #4 #5
 {
 	\tl_set:Nx #1 { \cs_to_str:N #2 }
-	\tl_if_novalue:nTF {#4}
-	{ \__deriv_preamble_aux:Vnn #1 { style-inf={#3} }    {#5} }
-	{ \__deriv_preamble_aux:Vnn #1 { style-inf={#3}, #4} {#5} }
+	
+	\tl_if_eq:nnTF {#5} { dv }
+	{
+		\tl_if_novalue:nTF {#4}
+		{ \__deriv_preamble_aux:Vnn #1 { style-inf={#3}, style-inf-denom={#3} }    {#5} }
+		{ \__deriv_preamble_aux:Vnn #1 { style-inf={#3}, style-inf-denom={#3}, #4} {#5} }
+	}
+	{
+		\tl_if_novalue:nTF {#4}
+		{ \__deriv_preamble_aux:Vnn #1 { style-inf={#3} }    {#5} }
+		{ \__deriv_preamble_aux:Vnn #1 { style-inf={#3}, #4} {#5} }
+	}
 }
 % variant, key-value, dv/i
 \cs_new_protected:Npn \__deriv_preamble_aux:nnn #1 #2 #3
@@ -500,7 +540,7 @@
 % variant
 \cs_new_protected:Npn \__deriv_dv_variables:n #1
 {
-	\__deriv_new:nnnn { tl    } {dv_#1} { style  } { inf, var, var_star, var_slash, var_compact, var_star_slash, var_star_compact, var_slash_compact, frac, frac_slash, frac_compact, frac_slash_compact }
+	\__deriv_new:nnnn { tl    } {dv_#1} { style  } { inf, inf_denom, var, var_star, var_slash, var_compact, var_star_slash, var_star_compact, var_slash_compact, frac, frac_slash, frac_compact, frac_slash_compact }
 	\__deriv_new:nnnn { tl    } {dv_#1} { scale  } { eval, eval_slash, fun, var, frac, frac_slash }
 	\__deriv_new:nnnn { tl    } {dv_#1} { delims } { eval, eval_slash, fun, var, frac, frac_slash }
 	\__deriv_new:nnnn { tl    } {dv_#1} { sep    } { inf_ord, inf_fun, ord_fun, frac_fun, inf_var, var_ord, var_var, var_inf, ord_ord, ord_inf, ord_var, eval_sb, eval_sp }
@@ -550,7 +590,7 @@
 {
 	\exp_args:Nne #1 {#3}{ s o m t/ t! m !e{\char_generate:nn {`_}{8}^} }
 	{
-	\group_begin:
+		\group_begin:
 		\deriv_local_keys:nnn {##2} { dv } {#2}
 		
 		\exp_args:Nnc \bool_xor:nnTF {##5} {l__deriv_dv_#2_switch_compact_bool}
@@ -600,7 +640,7 @@
 				}
 			}
 		}
-	\group_end:
+		\group_end:
 	}
 }
 % new/delare/renew/provide, variant, macro
@@ -608,13 +648,13 @@
 {
 	#1 {#3}{ s o m }
 	{
-	\group_begin:
+		\group_begin:
 		\deriv_local_keys:nnn {##2} { i } {#2}
 		
 		\exp_args:Nnc \bool_xor:nnTF {##1} { l__deriv_i_#2_switch_star_bool }
 		{ \__deriv_inf_star:nn {i_#2} {##3} }
 		{ \__deriv_inf_none:nn {i_#2} {##3} }
-	\group_end:
+		\group_end:
 	}
 }
 
@@ -622,7 +662,7 @@
 % variant, function, variable, sb-point, sp-point
 \cs_new_protected:Npn \__deriv_dv_star_slash:nnnnn #1 #2 #3 #4 #5
 {
-	star~slash
+	%star~slash
 	\__deriv_dv_preparation:Nnnn \l__deriv_dv_denom_tl {#1} {#3} {_star_slash}
 	\__deriv_evaluation_slash:nnnn {#1} {#4} {#5}
 	{
@@ -747,7 +787,7 @@
 % variant, function
 \cs_new_protected:Npn \__deriv_dv_numerator_fun:nn #1 #2
 {
-	\__deriv_insert_inf:n {#1}
+	\__deriv_insert_inf:nn {#1} {}
 	\__deriv_show_order:cTF { l__deriv_#1_misc_mixed_order_tl }
 	{
 		\__deriv_insert_ord:cnn { l__deriv_#1_misc_mixed_order_tl } {#1} { inf_ord }
@@ -763,7 +803,7 @@
 % variant
 \cs_new_protected:Npn \__deriv_dv_numerator_nofun:n #1
 {
-	\__deriv_insert_inf:n {#1}
+	\__deriv_insert_inf:nn {#1} {}
 	\__deriv_show_order:cT { l__deriv_#1_misc_mixed_order_tl }
 	{ \__deriv_insert_ord:cnn { l__deriv_#1_misc_mixed_order_tl } {#1} { inf_ord } }
 }
@@ -777,11 +817,19 @@
 	\tl_clear:N #1
 	\seq_set_from_clist:Nn \l__deriv_dv_var_seq {#3}
 	\seq_set_from_clist:Nc \l__deriv_dv_order_seq { l__deriv_#2_misc_order_clist }
+
+	% Add here a way to detect if we add denom or not
+	\str_if_in:nnTF {#4} {_compact} 
+	{% true
+		\tl_set:Nn \l__deriv_tmpd_tl {}
+	}{% false
+		\tl_set:Nn \l__deriv_tmpd_tl {_denom}
+	}
 	
-	\tl_use:c { l__deriv_#2_style_var#4_tl } \l__deriv_dv_var_seq \l__deriv_dv_order_seq #1 {#2} {#4}
+	\tl_use:c { l__deriv_#2_style_var#4_tl } \l__deriv_dv_var_seq \l__deriv_dv_order_seq #1 {#2} {#4} \l__deriv_tmpd_tl
 }
-% var_seq, order_seq, denom-tl, variant, if star
-\cs_new_protected:Npn \__deriv_build_var_multiple_right:NNNnn #1 #2 #3 #4 #5
+% var_seq, order_seq, denom-tl, variant, if star, if denom
+\cs_new_protected:Npn \__deriv_build_var_multiple_right:NNNnnn #1 #2 #3 #4 #5 #6
 {
 	\int_set:Nn \l__deriv_var_count_int { \seq_count:N #1 }
 	\__deriv_adjust_ord_seq:NN \l__deriv_var_count_int #2
@@ -797,7 +845,7 @@
 		\seq_pop_left:NN \l__deriv_tmpa_seq \l__deriv_tmpb_tl
 		\tl_put_right:Nx #3
 		{
-			\__deriv_insert_inf:n {#4}
+			\__deriv_insert_inf:nn {#4} { #6 }
 			\__deriv_insert_mskip:nn {#4} { inf_var }
 			\__deriv_insert_var:Nnnn \l__deriv_tmpb_tl {##2} {#4} {#5}
 			\__deriv_show_order:NTF \l__deriv_tmpa_tl
@@ -813,9 +861,10 @@
 		}
 	}
 }
-% var_seq, order_seq, denom-tl, variant, if star
-\cs_new_protected:Npn \__deriv_build_var_single_single:NNNnn #1 #2 #3 #4 #5
+% var_seq, order_seq, denom-tl, variant, if star, if denom
+\cs_new_protected:Npn \__deriv_build_var_single_single:NNNnnn #1 #2 #3 #4 #5 #6
 {
+	%
 	\int_set:Nn \l__deriv_var_count_int { \seq_count:N #1 }
 	\tl_set:Nf \l__deriv_tmpa_tl { \seq_use:Nn #1 { \__deriv_insert_mskip:nn {#4} { var_var } } }
 	
@@ -834,7 +883,7 @@
 	\seq_pop_left:NN \l__deriv_tmpa_seq \l__deriv_tmpc_tl
 	\tl_put_right:Nx #3
 	{
-		\__deriv_insert_inf:n {#4}
+		\__deriv_insert_inf:nn {#4} { #6 }
 		\__deriv_insert_mskip:nn {#4} { inf_var }
 		\__deriv_insert_var:NVnn \l__deriv_tmpc_tl \l__deriv_tmpa_tl {#4} {#5}
 		\__deriv_show_order:NT \l__deriv_tmpb_tl
@@ -844,8 +893,8 @@
 	{ \tl_set_eq:cN { l__deriv_#4_misc_mixed_order_tl } \l__deriv_tmpb_tl }
 }
 
-% var_seq, order_seq, denom-tl, variant
-\cs_new_protected:Npn \__deriv_build_var_single_right:NNNnn #1 #2 #3 #4 #5
+% var_seq, order_seq, denom-tl, variant, if star, if denom
+\cs_new_protected:Npn \__deriv_build_var_single_right:NNNnnn #1 #2 #3 #4 #5 #6
 {
 	\int_set:Nn \l__deriv_var_count_int { \seq_count:N #1 }
 	\__deriv_adjust_ord_seq:NN \l__deriv_var_count_int #2
@@ -857,7 +906,7 @@
 	
 	\tl_put_right:Nx #3
 	{
-		\__deriv_insert_inf:n {#4}
+		\__deriv_insert_inf:nn {#4} { #6 }
 		\__deriv_insert_mskip:nn {#4} { inf_var }
 	}
 	\seq_map_indexed_inline:Nn #1
@@ -912,7 +961,6 @@
 % ord-seq, var-seq
 \cs_new_protected:Npn \__deriv_adjust_trailing_ord:NN #1 #2
 {
-	\seq_clear:N \l__deriv_tmpa_seq
 	\int_set:Nn \l__deriv_vmo_int { \seq_count:N #2 - \seq_count:N #1 }
 	
 	\int_compare:nNnT { \l__deriv_vmo_int } < { 0 }
@@ -960,10 +1008,10 @@
 	\seq_set_from_clist:Nn \l__deriv_i_var_seq {#3}
 	\seq_set_from_clist:Nc \l__deriv_i_order_seq { l__deriv_#2_misc_order_clist }
 	
-	\tl_use:c { l__deriv_#2_style_var#4_tl } \l__deriv_i_var_seq \l__deriv_i_order_seq #1 {#2} {#4}
+	\tl_use:c { l__deriv_#2_style_var#4_tl } \l__deriv_i_var_seq \l__deriv_i_order_seq #1 {#2} {#4} {}
 }
 % var-seq, order-seq,  print-tl, variant, if star
-\cs_new_protected:Npn \__deriv_build_var_single_mixed:NNNnn #1 #2 #3 #4 #5
+\cs_new_protected:Npn \__deriv_build_var_single_mixed:NNNnnn #1 #2 #3 #4 #5 #6
 {
 	\int_set:Nn \l__deriv_var_count_int { \seq_count:N #1 }
 	\__deriv_var_bool_seq:cNN { l__deriv_#4_misc_var_clist } \l__deriv_add_var_bool_seq \l__deriv_var_count_int
@@ -992,7 +1040,7 @@
 	}
 	\tl_put_right:Nx #3
 	{
-		\__deriv_insert_inf:n {#4}
+		\__deriv_insert_inf:nn {#4} { #6 }
 		\sb
 		{
 			\__deriv_insert_mskip:nn {#4} { inf_var }
@@ -1008,8 +1056,9 @@
 		}
 	}
 }
-% var-seq, order-seq,  print-tl, variant, if star
-\cs_new_protected:Npn \__deriv_build_var_multiple_left:NNNnn #1 #2 #3 #4 #5
+
+% var-seq, order-seq,  print-tl, variant, if star, if denom
+\cs_new_protected:Npn \__deriv_build_var_multiple_left:NNNnnn #1 #2 #3 #4 #5 #6
 {
 	\int_set:Nn \l__deriv_var_count_int { \seq_count:N #1 }
 	\__deriv_var_bool_seq:cNN { l__deriv_#4_misc_var_clist } \l__deriv_add_var_bool_seq \l__deriv_var_count_int
@@ -1021,7 +1070,7 @@
 		\seq_pop_left:NN \l__deriv_add_var_bool_seq \l__deriv_tmpb_tl
 		\tl_put_right:Nx #3
 		{
-			\__deriv_insert_inf:n {#4}
+			\__deriv_insert_inf:nn {#4} { #6 }
 			\__deriv_show_order:NTF \l__deriv_tmpa_tl
 			{
 				\__deriv_insert_ord:Nnn \l__deriv_tmpa_tl {#4} { inf_ord }
@@ -1035,8 +1084,8 @@
 		}
 	}
 }
-% var-seq, order-seq,  print-tl, variant, if star
-\cs_new_protected:Npn \__deriv_build_var_multiple_mixed:NNNnn #1 #2 #3 #4 #5
+% var-seq, order-seq,  print-tl, variant, if star, if denom
+\cs_new_protected:Npn \__deriv_build_var_multiple_mixed:NNNnnn #1 #2 #3 #4 #5 #6
 {
 	\int_set:Nn \l__deriv_var_count_int { \seq_count:N #1 }
 	\__deriv_var_bool_seq:cNN { l__deriv_#4_misc_var_clist } \l__deriv_add_var_bool_seq \l__deriv_var_count_int
@@ -1048,7 +1097,7 @@
 		\seq_pop_left:NN \l__deriv_add_var_bool_seq \l__deriv_tmpb_tl
 		\tl_put_right:Nx #3
 		{
-			\__deriv_insert_inf:n {#4}
+			\__deriv_insert_inf:nn {#4} { #6 }
 			\__deriv_show_order:NT \l__deriv_tmpa_tl
 			{ \__deriv_insert_ord:Nnn \l__deriv_tmpa_tl {#4} { inf_ord } }
 			\sb
@@ -1063,8 +1112,8 @@
 }
 %%%%%  And the rest of the code  %%%%%
 % variant
-\cs_new:Npn \__deriv_insert_inf:n #1
-{ \exp_not:v { l__deriv_#1_style_inf_tl } }
+\cs_new:Npn \__deriv_insert_inf:nn #1 #2
+{ \exp_not:v { l__deriv_#1_style_inf#2_tl } }
 % dv, function, muskip
 \cs_new:Npn \__deriv_insert_fun:nnn #1 #2 #3
 {
@@ -1208,10 +1257,10 @@
 \cs_new:Npn \__deriv_mixed_order:NNn #1 #2 #3
 {
 	\__deriv_replace:NN \l__deriv_input_seq #2
-	\__deriv_seq_counting:NNN \l__deriv_symbol_seq \l__deriv_number_seq \l__deriv_input_seq
+	\__deriv_seq_counting:NNNn \l__deriv_symbol_seq \l__deriv_number_seq \l__deriv_input_seq {#3}
 	\__deriv_sort:NNNn \l__deriv_permutation_seq \l__deriv_symbol_seq \l__deriv_number_seq {#3}
 	\__deriv_combine_seq:NNNNn \l__deriv_sorted_seq \l__deriv_permutation_seq \l__deriv_symbol_seq \l__deriv_number_seq {#3}
-	\__deriv_output:NNNn #1 \l__deriv_sorted_seq \l__deriv_numerical_int {#3}
+	\__deriv_output:NNNn #1 \l__deriv_sorted_seq \l__deriv_numerical_tl {#3}
 }
 % input-seq, order-seq
 \cs_new_protected:Npn \__deriv_replace:NN #1 #2
@@ -1225,20 +1274,39 @@
 	\seq_set_split:NnV #1 { , } \l__deriv_input_tl
 	\seq_remove_all:Nn #1 {}
 }
+
 % symbol-seq, number-seq, input-seq
-\cs_new_protected:Npn \__deriv_seq_counting:NNN #1 #2 #3
+\cs_new_protected:Npn \__deriv_seq_counting:NNNn #1 #2 #3 #4
+{ \__deriv_seq_counting:NNNNNNNn #1 #2 #3 \l__deriv_sym_tmpa_seq \l__deriv_sym_tmpb_seq \l__deriv_num_tmpa_seq \l__deriv_num_tmpb_seq {#4} }
+
+\cs_new_protected:Npn \__deriv_seq_counting:NNNNNNNn #1 #2 #3 #4 #5 #6 #7 #8
 {
 	\seq_clear:N #1
 	\seq_clear:N #2
+	\seq_clear:N #4
+	\seq_clear:N #5
+	\seq_clear:N #6
+	\seq_clear:N #7
+	\tl_clear:N \l__deriv_numerical_tl
 	
 	\seq_map_inline:Nn #3
 	{
-		\__deriv_extract:NNn \l__deriv_sym_tmpa_tl \l__deriv_num_tmpa_tl {##1}
+		\str_if_in:nnTF {##1} /
+		{ \__deriv_extract_frac:NNNNw \l__deriv_sym_tmpa_tl \l__deriv_sym_tmpb_tl \l__deriv_num_tmpa_tl \l__deriv_num_tmpb_tl ##1 \q_stop }
+		{
+			\__deriv_extract:NNn \l__deriv_sym_tmpa_tl \l__deriv_num_tmpa_tl {##1}
+			\tl_clear:N \l__deriv_sym_tmpb_tl
+			\tl_set:Nn \l__deriv_num_tmpb_tl { 1 }
+		}
 		
-		\seq_if_in:NVTF \l__deriv_symbol_seq \l__deriv_sym_tmpa_tl
-		{ \__deriv_update_seq:NNNN #1 #2 \l__deriv_sym_tmpa_tl \l__deriv_num_tmpa_tl }
-		{ \__deriv_add_to_seq:NNNN #1 #2 \l__deriv_sym_tmpa_tl \l__deriv_num_tmpa_tl }
+		\__deriv_if_in_two_seq:NNNNTF #4 #5 \l__deriv_sym_tmpa_tl \l__deriv_sym_tmpb_tl
+		{ \__deriv_update_seq:NNNNV   #6 #7 \l__deriv_num_tmpa_tl \l__deriv_num_tmpb_tl \l__deriv_seq_pos_int }
+		{
+			\__deriv_add_to_seq:NNVV #4 #6 \l__deriv_sym_tmpa_tl \l__deriv_num_tmpa_tl
+			\__deriv_add_to_seq:NNVV #5 #7 \l__deriv_sym_tmpb_tl \l__deriv_num_tmpb_tl
+		}
 	}
+	\__deriv_combine_frac:NNNNNNn #1 #2 #4 #5 #6 #7 {#8}
 }
 % sym-tl, num-tl, seq-item
 \cs_new_protected:Npn \__deriv_extract:NNn #1 #2 #3
@@ -1261,31 +1329,135 @@
 		{ - } { \tl_set:Nn #2 { -1 } }
 	}
 }
-% sym-tl, num-tl
-\cs_new_protected:Npn \__deriv_add_to_seq:NNNN #1 #2 #3 #4
+
+\cs_new_protected:Npn \__deriv_extract_frac:NNNNw #1 #2 #3 #4 #5 / #6 \q_stop
 {
-	\seq_put_right:NV #1 #3
-	\seq_put_right:NV #2 #4
+	\__deriv_extract:NNn #1 #3 {#5}
+	\__deriv_extract:NNn #2 #4 {#6}
+	
+	\tl_if_eq:NNT #1 #2
+	{
+		\tl_clear:N #1
+		\tl_clear:N #2
+	}
+}
+
+\cs_new:Npn \__deriv_combine_frac:NNNNNNn #1 #2 #3 #4 #5 #6 #7
+{
+	\int_step_inline:nn { \seq_count:N #3 }
+	{
+		\tl_set:Nx \l__deriv_tmpa_tl { \seq_item:Nn #3 {##1} }
+		\tl_set:Nx \l__deriv_tmpb_tl { \seq_item:Nn #4 {##1} }
+		\int_set:Nn \l__deriv_tmpa_int { \seq_item:Nn #5 {##1} }
+		\int_set:Nn \l__deriv_tmpb_int { \seq_item:Nn #6 {##1} }
+		
+		\int_compare:nNnF \l__deriv_tmpa_int = 0
+		{
+			\__deriv_adjust_frac_integers:NN \l__deriv_tmpa_int \l__deriv_tmpb_int
+			
+			\__deriv_add_frac_to_seq:NNVVVVn #1 #2 \l__deriv_tmpa_tl \l__deriv_tmpb_tl \l__deriv_tmpa_int \l__deriv_tmpb_int {#7}
+		}
+	}
+}
+
+\cs_new:Npn \__deriv_adjust_frac_integers:NN #1 #2
+{
+	\int_compare:nNnTF #1 = #2
+	{
+		\int_set:Nn #1 { 1 }
+		\int_set:Nn #2 { 1 }
+	}
+	{
+		\int_compare:nNnT \l__deriv_tmpb_int < 0
+		{
+			\int_set:Nn #1 { -1*#1 }
+			\int_set:Nn #2 { -1*#2 }
+		}
+		\deriv_gcd:NN #1 #2
+	}
 }
 % sym-tl, num-tl
-\cs_new_protected:Npn \__deriv_update_seq:NNNN #1 #2 #3 #4
+\cs_new_protected:Npn \__deriv_add_frac_to_seq:NNnnnnn #1 #2 #3 #4 #5 #6 #7
+{
+	\tl_if_empty:nTF {#3}
+	{
+		\tl_if_empty:nTF {#4}
+		{
+			\str_if_eq:vnTF { l__deriv_#7_sort_numerical_tl } { symbolic }
+			{
+				\int_compare:nNnTF {#6} = 1
+				{ \__deriv_add_to_seq:NNnn #1 #2 {     } {#5} }
+				{ \__deriv_add_to_seq:NNnn #1 #2 { /#6 } {#5} }
+			}
+			{
+				\int_compare:nNnTF {#6} = 1
+				{ \tl_set:Nn \l__deriv_numerical_tl {#5} }
+				{ \tl_set:Nn \l__deriv_numerical_tl { #5/#6 } }
+			}
+		}
+		{
+			\int_compare:nNnTF {#6} = 1
+			{ \__deriv_add_to_seq:NNnn #1 #2 { /#4     } {#5} }
+			{ \__deriv_add_to_seq:NNnn #1 #2 { /(#6#4) } {#5} }
+		}
+	}
+	{
+		\tl_if_empty:nTF {#4}
+		{
+			\int_compare:nNnTF {#6} = 1
+			{ \__deriv_add_to_seq:NNnn #1 #2 {#3} {#5} }
+			{ \__deriv_add_to_seq:NNnn #1 #2 { #3/#6 } {#5} }
+		}
+		{
+			\int_compare:nNnTF {#6} = 1
+			{ \__deriv_add_to_seq:NNnn #1 #2 { #3/#4     } {#5} }
+			{ \__deriv_add_to_seq:NNnn #1 #2 { #3/(#6#4) } {#5} }
+		}
+	}
+}
+
+% sym-tl, num-tl
+\cs_new_protected:Npn \__deriv_add_to_seq:NNnn #1 #2 #3 #4
+{
+	\seq_put_right:Nn #1 {#3}
+	\seq_put_right:Nn #2 {#4}
+}
+% sym-tl, num-tl
+\cs_new_protected:Npn \__deriv_update_seq:NNnn #1 #2 #3 #4
 {
 	\seq_map_indexed_inline:Nn #1
 	{
-		\tl_if_eq:NnT #3 {##2}
+		\tl_if_eq:nnT {#3} {##2}
 		{
 			\exp_args:NNnx
-			\seq_set_item:Nnn #2 {##1}
-			{ \int_eval:n { \seq_item:Nn #2 {##1} + #4 } }
+			\seq_set_item:Nnn #2 {##1} { \int_eval:n { \seq_item:Nn #2 {##1} + #4 } }
 			\seq_map_break:
 		}
 	}
+}
+
+\cs_new_protected:Npn \__deriv_find_in_seq:NNn #1 #2 #3
+{
+	\int_zero:N #2
+	\seq_map_indexed_inline:Nn #1
+	{ \tl_if_eq:nnT {#3} {##2} { \seq_map_break:n { \int_set:Nn #2 {##1} } } }
+}
+
+\cs_set_eq:NN \__deriv_update_seq:Nnn \seq_set_item:Nnn
+\cs_generate_variant:Nn \__deriv_update_seq:Nnn { NVV }
+
+\cs_new_protected:Npn \__deriv_update_seq:NNNNn #1 #2 #3 #4 #5
+{ \__deriv_addfrac:NNVVxxn #1 #2 #3 #4 { \seq_item:Nn #1 {#5} } { \seq_item:Nn #2 {#5} } {#5} }
+
+\cs_new:Npn \__deriv_addfrac:NNnnnnn #1 #2 #3 #4 #5 #6 #7
+{
+	\exp_args:NNnx \seq_set_item:Nnn #1 {#7} { \int_eval:n { #3*#6 + #4*#5 } }
+	\exp_args:NNnx \seq_set_item:Nnn #2 {#7} { \int_eval:n { #4*#6 } }
 }
 % sorted-seq, permutation-seq, symbol-seq, number-seq, variant
 \cs_new:Npn \__deriv_combine_seq:NNNNn #1 #2 #3 #4 #5
 {
 	\seq_clear:N #1
-	\int_zero:N \l__deriv_numerical_int
 	\seq_map_inline:Nn #2
 	{
 		\tl_set:Nx \l__deriv_sym_tmpa_tl { \seq_item:Nn #3 {##1} }
@@ -1297,27 +1469,24 @@
 \cs_new_protected:Npn \__deriv_eval_term:Nnnn #1 #2 #3 #4
 {
 	\tl_if_empty:nTF {#2}
-	{ \__deriv_numerical_term:Nnn #1 {#3} {#4} }
+	{ \seq_put_right:Nn #1 {#3} }
 	{
-		\int_compare:nNnTF {#3} = { 1 }
-		{ \seq_put_right:Nn #1 {#2} }
+		\tl_if_head_eq_charcode:nNTF {#2} /
+		{ \seq_put_right:Nn #1 {#3#2} }
 		{
-			\int_compare:nNnTF {#3} = { 0 }
-			{ \prg_do_nothing: }
+			\int_compare:nNnTF {#3} = { 1 }
+			{ \seq_put_right:Nn #1 {#2} }
 			{
-				\int_compare:nNnTF {#3} = { -1 }
-				{ \seq_put_right:Nn #1 { -#2 } }
-				{ \seq_put_right:Nn #1 {#3#2}  }
+				\int_compare:nNnTF {#3} = { 0 }
+				{ \prg_do_nothing: }
+				{
+					\int_compare:nNnTF {#3} = { -1 }
+					{ \seq_put_right:Nn #1 { -#2 } }
+					{ \seq_put_right:Nn #1 {#3#2}  }
+				}
 			}
 		}
 	}
-}
-% sorted-seq, num-tl, variant
-\cs_new_protected:Npn \__deriv_numerical_term:Nnn #1 #2 #3
-{
-	\str_if_eq:vnTF { l__deriv_#3_sort_numerical_tl } { symbolic }
-	{ \seq_put_right:Nn #1 {#2} }
-	{ \int_set:Nn \l__deriv_numerical_int {#2} }
 }
 % permutation-seq, symbol-seq, number-seq, variant
 \cs_new_protected:Npn \__deriv_sort:NNNn #1 #2 #3 #4
@@ -1379,7 +1548,7 @@
 % dv
 \cs_new_protected:Npn \__deriv_sort_lexical:n #1
 { \__deriv_sort_lexical_auxi:VVn \l__deriv_sym_tmpa_tl \l__deriv_sym_tmpb_tl {#1} }
-% dv
+% symbol-str-1, symbol-str-2, dv
 \cs_new_protected:Npn \__deriv_sort_lexical_auxi:nnn #1 #2 #3
 {
 	\str_compare:nNnTF {#1} < {#2}
@@ -1425,20 +1594,20 @@
 {
 	\tl_set:Nf #1 { \seq_use:Nn #2 { + } }
 	
-	\int_compare:nNnF {#3} = { 0 }
+	\tl_if_empty:NF #3
 	{
 		\tl_if_empty:NTF #1
 		{ \tl_put_left:NV #1 #3 }
 		{
 			\exp_args:Nv \str_case:nnF { l__deriv_#4_sort_numerical_tl }
 			{
-				{ last  } { \tl_put_right:Nx #1 { + \int_use:N #3 } }
-				{ first } { \tl_put_left:Nx  #1 { \int_use:N #3 + } }
+				{ last  } { \tl_put_right:Nx #1 { + #3 } }
+				{ first } { \tl_put_left:Nx  #1 { #3 + } }
 			}
 			{
 				\tl_if_head_eq_charcode:VNTF #1 -
 				{ \tl_put_left:NV  #1 #3 }
-				{ \tl_put_right:Nx #1 { + \int_use:N #3 } }
+				{ \tl_put_right:Nx #1 { + #3 } }
 			}
 		}
 	}
@@ -1446,6 +1615,78 @@
 	\tl_if_empty:NT #1 { \tl_set:Nn #1 { 0 } }
 }
 
+%%%%% GCD (Greatest Common Divisor) %%%%%
+
+\cs_new:Npn \deriv_binary_shift_left:Nn #1 #2
+{
+	\tl_set:Nx #1
+	{
+		\tl_range:Nnn #1 { #2+1 } { -1 }
+		\prg_replicate:nn {#2} { 0 }
+	}
+}
+\cs_new:Npn \deriv_binary_shift_right:N #1
+{ \tl_set:Nx #1 { 0 \tl_range:Nnn #1 { 1 } { -2 } } }
+
+\prg_new_conditional:Npnn \deriv_binary_if_even:N #1 { p }
+{
+	\str_if_eq:eeTF { \tl_item:Nn #1 { -1 } } { 0 }
+	{ \prg_return_true:  }
+	{ \prg_return_false: }
+}
+
+\cs_new:Npn \deriv_gcd:NN #1 #2
+{
+	% Not needed
+	%\int_compare:nNnTF #1 = 0
+	%{ \int_set:Nn #2 { \int_sign:n {#2} } }
+	%{
+		\int_compare:nNnTF #2 = 0
+		{ \int_set:Nn #1 { \int_sign:n {#1} } }
+		{
+			\tl_set:Nx \l__deriv_gcd_result_tl { \int_to_bin:n { \int_abs:n #1 } }
+			\tl_set:Nx \l__deriv_gcd_remain_tl { \int_to_bin:n { \int_abs:n #2 } }
+			
+			\__deriv_gcd:NN \l__deriv_gcd_result_tl \l__deriv_gcd_remain_tl
+			
+			\int_set:Nn #1 { #1 / \l__deriv_gcd_result_tl }
+			\int_set:Nn #2 { #2 / \l__deriv_gcd_result_tl }
+		}
+		%}
+}
+
+\cs_new:Npn \__deriv_gcd:NN #1 #2
+{
+	\int_zero:N \l__deriv_gcd_counter_int
+	\bool_while_do:nn { \deriv_binary_if_even_p:N #1 && \deriv_binary_if_even_p:N #2 }
+	{
+		\deriv_binary_shift_right:N #1
+		\deriv_binary_shift_right:N #2
+		\int_incr:N \l__deriv_gcd_counter_int
+	}
+	
+	\bool_while_do:nn { \deriv_binary_if_even_p:N #1 }
+	{ \deriv_binary_shift_right:N #1 }
+	
+	\bool_until_do:nn { \int_compare_p:nNn #2 = 0 }
+	{
+		\bool_while_do:nn { \deriv_binary_if_even_p:N #2 }
+		{ \deriv_binary_shift_right:N #2 }
+		
+		\__deriv_gcd_swap_helper:NNff #1 #2 { \int_from_bin:V #1 } { \int_from_bin:V #2 }
+	}
+	\deriv_binary_shift_left:NV #1 \l__deriv_gcd_counter_int
+	\tl_set:Nx #1 { \int_from_bin:V #1 }
+}
+\cs_new:Npn \__deriv_gcd_swap_helper:NNnn #1 #2 #3 #4
+{
+	\int_compare:nNnTF {#3} > {#4}
+	{
+		\tl_set_eq:NN #1 #2
+		\tl_set:Nx #2 { \int_to_bin:n { #3 - #4 } }
+	}
+	{ \tl_set:Nx #2 { \int_to_bin:n { #4 - #3 } } }
+}
 %%%%%  Declaring Variant  %%%%%
 
 \DeclareDocumentCommand{\NewDerivative}{ m m o }
@@ -1595,6 +1836,18 @@
 \cs_generate_variant:Nn \__deriv_set_default_auxii:nnn { f }
 \cs_generate_variant:Nn \__deriv_preamble_aux:nnn { V }
 \cs_generate_variant:Nn \__deriv_var_bool_seq:NNN { c }
+
+\cs_generate_variant:Nn \deriv_binary_shift_left:Nn { NV }
+\cs_generate_variant:Nn \__deriv_gcd_swap_helper:NNnn { NNff }
+
+\cs_generate_variant:Nn \__deriv_add_frac_to_seq:NNnnnnn { NNVVVV }
+\cs_generate_variant:Nn \__deriv_add_to_seq:NNnn { NNVV, NNnV }
+\cs_generate_variant:Nn \__deriv_update_seq:NNnn { NNVV, NNnV }
+\cs_generate_variant:Nn \__deriv_update_seq:NNNNn { NNNNV }
+\cs_generate_variant:Nn \__deriv_addfrac:NNnnnnn { NNVVxx }
+
+\cs_generate_variant:Nn \int_to_bin:n { V }
+\cs_generate_variant:Nn \int_from_bin:n { V }
 
 %%%%%   Messages   %%%%%
 
