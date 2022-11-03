@@ -173,8 +173,8 @@
 %%%%%  default values  %%%%%
 \prop_const_from_keyval:Nn \c__deriv_dv_pkg_keys_prop
 {
-	style-inf       = d,
 	style-inf-denom = d,
+	style-inf       = d,
 	style-frac    = \frac,
 	style-frac-/  = \slashfrac,
 	style-frac-/! = \slashfrac,
@@ -281,9 +281,6 @@
 {
 	\keys_define:nn { deriv/dv/#1 }
 	{
-		% style-inf       .tl_set:c  = { l__deriv_dv_#1_style_inf_tl },
-		% style-inf-denom .tl_set:c  = { l__deriv_dv_#1_style_inf_denom_tl },
-
 		style-inf 		 .code:n    = { \__deriv_set_inf:nnn {dv_#1} {##1} {} },
 		style-inf-denom .code:n    = { \__deriv_set_inf:nnn {dv_#1} {##1} {_denom} },
 
@@ -374,9 +371,7 @@
 
 % dv_variant, inf, if denom
 \cs_new:Npn \__deriv_set_inf:nnn #1 #2 #3
-{
-	% \tl_if_eq:nnTF {#5} { dv }
-	% {}{}
+{ %
 	\tl_if_eq:nnTF {#3} {}
 	{% true = no _denom so apply also to inf denom
 		\tl_set:cn { l__deriv_#1_style_inf_denom_tl } { #2 }
