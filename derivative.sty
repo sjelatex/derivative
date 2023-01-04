@@ -19,7 +19,7 @@
 \RequirePackage{expl3}[2021/11/07]
 \RequirePackage{xparse}[2021/11/07]
 \RequirePackage{l3keys2e}
-\ProvidesExplPackage{derivative}{2022/07/09}{1.2}{Nice and easy derivatives and differentials for LaTeX}
+\ProvidesExplPackage{derivative}{2023/01/05}{2.1}{Nice and easy derivatives and differentials for LaTeX}
 
 \bool_new:N \l__deriv_pkg_italic_bool
 \bool_new:N \l__deriv_pkg_upright_bool
@@ -162,6 +162,8 @@
 \int_new:N \l__deriv_seq_pos_int
 \int_new:N \l__deriv_sort_max_int
 
+\bool_new:N \l__deriv_lock_styleinf_bool
+
 \regex_const:Nn \c__deriv_cs_numbers_regex { \A\-?\d+(?:,\d+){0,2}\Z }
 \tl_const:Nn \c__deriv_digits_tl {123456789-0}
 
@@ -284,7 +286,7 @@
 		style-inf 		 .code:n    = { \__deriv_set_inf:nnn {dv_#1} {##1} {} },
 		style-inf-denom .code:n    = { \__deriv_set_inf:nnn {dv_#1} {##1} {_denom} },
 
-		style-var    .code:n    = { \__deriv_set_style_var:nnn {dv_#1} {##1} {} },
+		style-var    .choices:nn = { single-single, single-right, single-mixed, multiple-right, multiple-left, multiple-mixed }  { \__deriv_set_style_var:nnn {dv_#1} {##1} {} },
 		style-var-*  .code:n    = { \__deriv_set_style_var:nnn {dv_#1} {##1} {_star} },
 		style-var-/  .code:n    = { \__deriv_set_style_var:nnn {dv_#1} {##1} {_slash} },
 		style-var-!  .code:n    = { \__deriv_set_style_var:nnn {dv_#1} {##1} {_compact} },
@@ -327,8 +329,8 @@
 		
 		switch-* .bool_set:c = { l__deriv_dv_#1_switch_star_bool },
 		switch-/ .bool_set:c = { l__deriv_dv_#1_switch_slash_bool },
-		switch-sort .bool_set:c = { l__deriv_dv_#1_switch_sort_bool },
 		switch-! .bool_set:c = { l__deriv_dv_#1_switch_compact_bool },
+		switch-sort .bool_set:c = { l__deriv_dv_#1_switch_sort_bool },
 
 		
 		fun  .bool_set:c = { l__deriv_dv_#1_misc_fun_bool },
@@ -342,7 +344,7 @@
 		mixord      .tl_set:c = { l__deriv_dv_#1_misc_mixed_order_tl },
 		
 		sort-method .code:n = { \__deriv_set_sort_method:nn {#1} {##1} },
-		sort-numerical      .choices:nn  = { auto, first, last, symbolic } { \tl_set:cn { l__deriv_dv_#1_sort_numerical_tl } {##1} },
+		sort-numerical       .choices:nn  = { auto, first, last, symbolic } { \tl_set:cn { l__deriv_dv_#1_sort_numerical_tl } {##1} },
 		sort-abs-reverse     .bool_set:c = { l__deriv_dv_#1_sort_abs_reverse_bool    },
 		sort-number-reverse  .bool_set:c = { l__deriv_dv_#1_sort_number_reverse_bool },
 		sort-sign-reverse    .bool_set:c = { l__deriv_dv_#1_sort_sign_reverse_bool   },
@@ -373,10 +375,18 @@
 \cs_new:Npn \__deriv_set_inf:nnn #1 #2 #3
 { %
 	\tl_if_eq:nnTF {#3} {}
-	{% true = no _denom so apply also to inf denom
-		\tl_set:cn { l__deriv_#1_style_inf_denom_tl } { #2 }
-	}{% false 
+	{	% not _denom
+		\bool_if:cTF { l__deriv_lock_styleinf_bool }
+		{ % if the lock is true then unlock it for next one
+			\bool_set_false:c { l__deriv_lock_styleinf_bool } 
+		}
+		{ % if the lock is free and not _denom then apply change to _denom
+			\tl_set:cn { l__deriv_#1_style_inf_denom_tl } { #2 }
+		}
+	}{ %_denom
+		\bool_set_true:c { l__deriv_lock_styleinf_bool } 
 	}
+
 	\tl_set:cn { l__deriv_#1_style_inf#3_tl } { #2 }
 }
 
@@ -574,6 +584,7 @@
 	\__deriv_new:nnnn { prop  } {dv_#1} { user   } { keys }
 	\__deriv_new:nnnn { bool  } {dv_#1} { local  } { keys }
 }
+
 % variant
 \cs_new_protected:Npn \__deriv_i_variables:n #1
 {
@@ -587,14 +598,47 @@
 	\__deriv_new:nnnn { prop  } {i_#1} { user   } { keys }
 	\__deriv_new:nnnn { bool  } {i_#1} { local  } { keys }
 }
+
 % variant, keyval, dv/i
 \cs_new_protected:Npn \__deriv_set_default:nnn #1 #2 #3
 {
-	% SET DEFAULT.#1.
-	\tl_if_novalue:nTF {#2}
-	{ \prop_set_eq:cc { l__deriv_#3_#1_user_keys_prop } { c__deriv_#3_pkg_keys_prop } }
-	{ \prop_put_from_keyval:cn { l__deriv_#3_#1_user_keys_prop } {#2} }
+	% Get previous (default) values of some keys.
+	\tl_set:Nx \l__deriv_tmpa_tl {\prop_item:cn {l__deriv_#3_#1_user_keys_prop} {style-inf}}
+	\tl_set:Nx \l__deriv_tmpb_tl {\prop_item:cn {l__deriv_#3_#1_user_keys_prop} {style-inf-denom}}
 	
+	% transform input to a dictonary
+	\tl_if_novalue:nTF {#2}
+	{ % no value given so let us take the default keys
+		\prop_set_eq:cc { l__deriv_#3_#1_user_keys_prop } { c__deriv_#3_pkg_keys_prop } 
+	}{ % get value from users' input
+		\prop_put_from_keyval:cn { l__deriv_#3_#1_user_keys_prop } {#2} 
+	}
+	
+	% modify some values in the dictonary because these values can be linked.
+	%% Capture these special keys from the input dictionary
+	\tl_set:Nx \l__deriv_tmpc_tl {\prop_item:cn {l__deriv_#3_#1_user_keys_prop} {style-inf}}
+	\tl_set:Nx \l__deriv_tmpd_tl {\prop_item:cn {l__deriv_#3_#1_user_keys_prop} {style-inf-denom}}
+	%% Compare with the previous values to detect what to do.
+	\prop_if_in:cnT {l__deriv_#3_#1_user_keys_prop} {style-inf-denom} 
+	{ % if style-inf-denom exist (otherwise it has no meaning)
+		\tl_if_eq:NNF \l__deriv_tmpa_tl \l__deriv_tmpc_tl
+		{ % style-inf is given by the user
+			\tl_if_eq:NNT \l__deriv_tmpb_tl \l__deriv_tmpd_tl
+			{ % and style-inf-denom is given by the user
+				% then modify style-inf-denom to not be overwright by the default value
+				% The new value of style-inf-denom is the one given by the user.
+				\prop_put:cnV {l__deriv_#3_#1_user_keys_prop} {style-inf-denom} {\l__deriv_tmpc_tl}
+			}	
+		}
+	}
+	% free some tmp variable.
+	\tl_set:Nn \l__deriv_tmpa_tl {}
+	\tl_set:Nn \l__deriv_tmpb_tl {}
+	\tl_set:Nn \l__deriv_tmpc_tl {}
+	\tl_set:Nn \l__deriv_tmpd_tl {}
+
+	
+	% set this (eventually modified) dictionary as the new default.
 	\__deriv_set_default_auxi:cnn { l__deriv_#3_#1_user_keys_prop } {#1} {#3}
 	\keys_set:nn { deriv/#3/#1 } { default }
 }
@@ -609,7 +653,6 @@
 	\keys_define:nn { deriv/#3/#2 } { default .meta:n = {#1} } 
 }
 
-
 % new/delare/renew/provide, variant, macro
 \cs_new_protected:Npn \deriv_dv_define:Nnn #1 #2 #3
 {
@@ -619,27 +662,23 @@
 		\deriv_local_keys:nnn {##2} { dv } {#2}
 		
 		\exp_args:Nnc \bool_xor:nnTF {##5} {l__deriv_dv_#2_switch_compact_bool}
-		{%compact = true
+		{% compact = true
 			\exp_args:Nnc \bool_xor:nnTF {##4} { l__deriv_dv_#2_switch_slash_bool }
 			{% slash = true
 				\exp_args:Nnc \bool_xor:nnTF {##1} { l__deriv_dv_#2_switch_star_bool }
-				{% star and slash + compact
-					% \msg_error:nnxx { deriv } { differential-options-incompatible } 
-					% {'slash','star'~and~'compact'} {'slash','star'~and~'compact'}
+				{% star + slash + compact
 					\__deriv_dv_star_slash_compact:nnnnn  {dv_#2} {##3} {##6} {##7} {##8} 
 				}
-				{% slash only + compact
-					% \msg_error:nnxx { deriv } { differential-options-incompatible } 
-					% {'slash'~and~'compat'} {'slash'~and~'compact'}
+				{% slash + compact
 					\__deriv_dv_slash_compact:nnnnn {dv_#2} {##3} {##6} {##7} {##8} 
 				}
 			}
 			{% slash = false
 				\exp_args:Nnc \bool_xor:nnTF {##1} { l__deriv_dv_#2_switch_star_bool }
-				{% star only + compact
+				{% star + compact
 					\__deriv_dv_star_compact:nnnnn {dv_#2} {##3} {##6} {##7} {##8} 
 				}
-				{% no star no slash + compact
+				{% compact only
 					\__deriv_dv_compact:nnnnn {dv_#2} {##3} {##6} {##7} {##8} 
 				}
 			}
@@ -648,7 +687,7 @@
 			\exp_args:Nnc \bool_xor:nnTF {##4} { l__deriv_dv_#2_switch_slash_bool }
 			{% slash = true
 				\exp_args:Nnc \bool_xor:nnTF {##1} { l__deriv_dv_#2_switch_star_bool }
-				{% star and slash 
+				{% star + slash 
 					\__deriv_dv_star_slash:nnnnn  {dv_#2} {##3} {##6} {##7} {##8}  
 				}
 				{% slash only
@@ -660,14 +699,17 @@
 				{% star only  
 					\__deriv_dv_star:nnnnn {dv_#2} {##3} {##6} {##7} {##8}  
 				}
-				{% no star no slash
+				{% none
 					\__deriv_dv_none:nnnnn {dv_#2} {##3} {##6} {##7} {##8} 
 				}
 			}
 		}
 		\group_end:
+		% reset lock for next use.
+		\bool_set_false:c { l__deriv_lock_styleinf_bool } 
 	}
 }
+
 % new/delare/renew/provide, variant, macro
 \cs_new_protected:Npn \deriv_i_define:Nnn #1 #2 #3
 {
@@ -687,8 +729,7 @@
 % variant, function, variable, sb-point, sp-point
 \cs_new_protected:Npn \__deriv_dv_star_slash:nnnnn #1 #2 #3 #4 #5
 {
-	%star~slash
-	\__deriv_dv_preparation:Nnnn \l__deriv_dv_denom_tl {#1} {#3} {_star_slash}
+	\__deriv_dv_preparation:Nnnn \l__deriv_dv_denom_tl {#1} {#3} { _star_slash }
 	\__deriv_evaluation_slash:nnnn {#1} {#4} {#5}
 	{
 		\__deriv_fraction_slash:nn {#1}
@@ -702,8 +743,8 @@
 }
 % variant, function, variable, sb-point, sp-point
 \cs_new_protected:Npn \__deriv_dv_star:nnnnn #1 #2 #3 #4 #5
-{	% star
-	\__deriv_dv_preparation:Nnnn \l__deriv_dv_denom_tl {#1} {#3} {_star}
+{
+	\__deriv_dv_preparation:Nnnn \l__deriv_dv_denom_tl {#1} {#3} { _star }
 	\__deriv_evaluation:nnnn {#1} {#4} {#5}
 	{
 		\__deriv_fraction:nn {#1}
@@ -717,8 +758,8 @@
 }
 % variant, function, variable, sb-point, sp-point
 \cs_new_protected:Npn \__deriv_dv_slash:nnnnn #1 #2 #3 #4 #5
-{ % slash
-	\__deriv_dv_preparation:Nnnn \l__deriv_dv_denom_tl {#1} {#3} {_slash}
+{
+	\__deriv_dv_preparation:Nnnn \l__deriv_dv_denom_tl {#1} {#3} { _slash }
 	\__deriv_evaluation_slash:nnnn {#1} {#4} {#5}
 	{
 		\__deriv_fraction_slash:nn {#1}
@@ -731,8 +772,8 @@
 }
 % variant, function, variable, sb-point, sp-point
 \cs_new_protected:Npn \__deriv_dv_none:nnnnn #1 #2 #3 #4 #5
-{	% none
-	\__deriv_dv_preparation:Nnnn \l__deriv_dv_denom_tl {#1} {#3} {}
+{
+	\__deriv_dv_preparation:Nnnn \l__deriv_dv_denom_tl {#1} {#3} { }
 	\__deriv_evaluation:nnnn {#1} {#4} {#5}
 	{
 		\__deriv_fraction:nn {#1}
@@ -761,9 +802,8 @@
 }
 % variant, function, variable, sb-point, sp-point
 \cs_new_protected:Npn \__deriv_dv_star_compact:nnnnn #1 #2 #3 #4 #5
-{  %star~compact
-	%
-	\__deriv_dv_preparation:Nnnn \l__deriv_dv_denom_tl {#1} {#3} {_star_compact}
+{ 
+	\__deriv_dv_preparation:Nnnn \l__deriv_dv_denom_tl {#1} {#3} { _star_compact }
 	
 	\__deriv_evaluation:nnnn {#1} {#4} {#5}
 	{
@@ -778,9 +818,8 @@
 }
 % variant, function, variable, sb-point, sp-point
 \cs_new_protected:Npn \__deriv_dv_slash_compact:nnnnn #1 #2 #3 #4 #5
-{	%slash~compact
-	%
-	\__deriv_dv_preparation:Nnnn \l__deriv_dv_denom_tl {#1} {#3} {_slash_compact}
+{
+	\__deriv_dv_preparation:Nnnn \l__deriv_dv_denom_tl {#1} {#3} { _slash_compact }
 	
 	\__deriv_evaluation:nnnn {#1} {#4} {#5}
 	{
@@ -794,9 +833,8 @@
 }
 % variant, function, variable, sb-point, sp-point
 \cs_new_protected:Npn \__deriv_dv_star_slash_compact:nnnnn #1 #2 #3 #4 #5
-{	%star~slash~compact
-	%
-	\__deriv_dv_preparation:Nnnn \l__deriv_dv_denom_tl {#1} {#3} {_star_slash_compact}
+{
+	\__deriv_dv_preparation:Nnnn \l__deriv_dv_denom_tl {#1} {#3} { _star_slash_compact }
 	
 	\__deriv_evaluation:nnnn {#1} {#4} {#5}
 	{
@@ -848,7 +886,7 @@
 	{% true
 		\tl_set:Nn \l__deriv_tmpd_tl {}
 	}{% false
-		\tl_set:Nn \l__deriv_tmpd_tl {_denom}
+		\tl_set:Nn \l__deriv_tmpd_tl { _denom }
 	}
 	
 	\tl_use:c { l__deriv_#2_style_var#4_tl } \l__deriv_dv_var_seq \l__deriv_dv_order_seq #1 {#2} {#4} \l__deriv_tmpd_tl

@@ -44,23 +44,23 @@ indent_length "2"
 \RequirePackage[style=english,english=british]{csquotes}
 \RequirePackage[final,babel,auto]{microtype}
 \RequirePackage{xcolor}
-	\definecolor{RoyalGray}{RGB}{127, 144, 158}
-	\definecolor{RoyalDarkGray}{RGB}{78, 93, 104}
-	\definecolor{RoyalLightGray}{RGB}{250, 250, 250}
-	\definecolor{RoyalRed}{RGB}{157, 16, 45}
-	\definecolor{RoyalBlue}{RGB}{0, 35, 102}
-	\definecolor{RoyalGreen}{RGB}{32, 77, 2}
+%	\definecolor{RoyalGray}{RGB}{127, 144, 158}
+%	\definecolor{RoyalDarkGray}{RGB}{78, 93, 104}
+%	\definecolor{RoyalLightGray}{RGB}{250, 250, 250}
+%	\definecolor{RoyalRed}{RGB}{157, 16, 45}
+%	\definecolor{RoyalBlue}{RGB}{0, 35, 102}
+%	\definecolor{RoyalGreen}{RGB}{32, 77, 2}
 
-%	\definecolor{RoyalGray}{RGB}{75, 75, 75}
-%	\definecolor{RoyalDarkGray}{RGB}{225, 225, 225}
-%	\definecolor{RoyalLightGray}{RGB}{30, 30, 30}
-%	\definecolor{RoyalRed}{RGB}{255, 177, 151} % 207, 102, 121
-%	\definecolor{RoyalBlue}{RGB}{187, 134, 252} % 55, 185, 255
-%	\definecolor{RoyalGreen}{RGB}{3, 218, 198} % 52, 177, 20
-%	\definecolor{RoyalPageCoulor}{RGB}{18, 18, 18} % 30, 30, 30
-%	\definecolor{RoyalTextCoulor}{RGB}{225, 225, 225}
-%	\pagecolor{RoyalPageCoulor}
-%	\color{RoyalTextCoulor}
+	\definecolor{RoyalGray}{RGB}{75, 75, 75}
+	\definecolor{RoyalDarkGray}{RGB}{225, 225, 225}
+	\definecolor{RoyalLightGray}{RGB}{30, 30, 30}
+	\definecolor{RoyalRed}{RGB}{255, 177, 151} % 207, 102, 121
+	\definecolor{RoyalBlue}{RGB}{187, 134, 252} % 55, 185, 255
+	\definecolor{RoyalGreen}{RGB}{3, 218, 198} % 52, 177, 20
+	\definecolor{RoyalPageCoulor}{RGB}{18, 18, 18} % 30, 30, 30
+	\definecolor{RoyalTextCoulor}{RGB}{225, 225, 225}
+	\pagecolor{RoyalPageCoulor}
+	\color{RoyalTextCoulor}
 
 \RequirePackage{amsmath, amsthm}
 	\allowdisplaybreaks
@@ -1379,7 +1379,7 @@ indent_length "2"
 	\clearpage
 	\section{Introduction}
 This package started as a personal package a few years ago that I used in various projects. Firstly, it was written in \tex{} and \latex, which gave rise to various errors as the complexity of the package grew larger and ended up as a spaghetti code. Therefore, the code was rewritten into the \latex3 language and may now be easily maintained. Originally this package was written because there did not exist any great package for derivatives. It was first much later that I discovered the \pkg{diffcoeff} package, which does a good job. However, at this time, I had already written much of the code with no documentation. So I decided to write one and make it into a package for the public.
-	
+
 As a note on terminology, I use the wording \emph{infinitesimal} abbreviated as \texttt{inf} for the operator symbols $d, \partial, \delta$ etc. that used in derivatives like $\odv{y}{x}, \pdv{y}{x}, \fdv{y}{x}$ and in differentials like $\odif{x}, \pdif{x}, \fdif{x}$. In the description of macros and options, I often write \emph{cs-\meta{placeholder}} to denote a comma-separated list of \meta{placeholder}. For example, \oarg{cs-numbers} is used in the option section for math space keys to denote comma-separated list of numbers. It should also be noted that whenever an argument reads \meta{keyvalue list}, it means that it is a comma-separated list of keyvalue pairs.
 
 \bigskip
@@ -1586,6 +1586,21 @@ This package offers five other derivatives: Ordinary derivative \macro{\odv}, ma
 	\pdv[order={1/m+1/2n,1/m+1/3n,1/k+2/k}]{f}{x,y,z} \\
 \end{align}
 
+\begin{align}
+	\pdv[order={1/2m,1/(2m)}]{f}{x,y,z} \\
+	\pdv[switch-sort=false,order={(m+n)/2,n,2m}]{f}{x,y,z} \\
+\end{align}
+
+\begin{align}
+	\qdv[order={2,n,1+m,n}]{f}{x,y,z,t} \\
+	\qdv*[order={2,n,1+m,n}]{f}{x,y,z,t} \\
+	\qdv[order={2,n,1+m,n}]{f}/{x,y,z,t} \\
+	\qdv*[order={2,n,1+m,n}]{f}/{x,y,z,t} \\
+	\qdv[order={2,n,1+m,n}]{f}!{x,y,z,t} \\
+	\qdv*[order={2,n,1+m,n}]{f}!{x,y,z,t} \\
+	\qdv[order={2,n,1+m,n}]{f}/!{x,y,z,t} \\
+	\qdv*[order={2,n,1+m,n}]{f}/!{x,y,z,t}
+\end{align}
 	
 	\clearpage
 	\section{Differentials}
@@ -2196,9 +2211,9 @@ The options in this subsection are available for differentials defined by the pa
 	Sets the differential's notation when the star argument is absent (given \keyval{switch-*}{false}). The key's default value is \val{\default}. The value \val{single} creates a single differential with the variables and orders in a subscript and superscript, respectively. The value \val{multiple} creates a differentials for each variable. The value \val{mixed} creates multiple differentials with the variables and orders in a subscript and superscript, respectively.
 	
 	\begin{example}
-		\odif[style-notation=multiple, order={n,1,2}]{x,y,z,t} \\
-		\odif[style-notation=single, order={n,1,2}]{x,y,z,t} \\
-		\odif[style-notation=mixed, order={n,1,2}]{x,y,z,t}
+		\odif[style-var=multiple, order={n,1,2}]{x,y,z,t} \\
+		\odif[style-var=single, order={n,1,2}]{x,y,z,t} \\
+		\odif[style-var=mixed, order={n,1,2}]{x,y,z,t}
 	\end{example}
 \end{option}
 
