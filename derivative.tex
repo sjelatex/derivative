@@ -44,23 +44,23 @@ indent_length "2"
 \RequirePackage[style=english,english=british]{csquotes}
 \RequirePackage[final,babel,auto]{microtype}
 \RequirePackage{xcolor}
-%	\definecolor{RoyalGray}{RGB}{127, 144, 158}
-%	\definecolor{RoyalDarkGray}{RGB}{78, 93, 104}
-%	\definecolor{RoyalLightGray}{RGB}{250, 250, 250}
-%	\definecolor{RoyalRed}{RGB}{157, 16, 45}
-%	\definecolor{RoyalBlue}{RGB}{0, 35, 102}
-%	\definecolor{RoyalGreen}{RGB}{32, 77, 2}
+	\definecolor{RoyalGray}{RGB}{127, 144, 158}
+	\definecolor{RoyalDarkGray}{RGB}{78, 93, 104}
+	\definecolor{RoyalLightGray}{RGB}{250, 250, 250}
+	\definecolor{RoyalRed}{RGB}{157, 16, 45}
+	\definecolor{RoyalBlue}{RGB}{0, 35, 102}
+	\definecolor{RoyalGreen}{RGB}{32, 77, 2}
 
-	\definecolor{RoyalGray}{RGB}{75, 75, 75}
-	\definecolor{RoyalDarkGray}{RGB}{225, 225, 225}
-	\definecolor{RoyalLightGray}{RGB}{30, 30, 30}
-	\definecolor{RoyalRed}{RGB}{255, 177, 151} % 207, 102, 121
-	\definecolor{RoyalBlue}{RGB}{187, 134, 252} % 55, 185, 255
-	\definecolor{RoyalGreen}{RGB}{3, 218, 198} % 52, 177, 20
-	\definecolor{RoyalPageCoulor}{RGB}{18, 18, 18} % 30, 30, 30
-	\definecolor{RoyalTextCoulor}{RGB}{225, 225, 225}
-	\pagecolor{RoyalPageCoulor}
-	\color{RoyalTextCoulor}
+%	\definecolor{RoyalGray}{RGB}{75, 75, 75}
+%	\definecolor{RoyalDarkGray}{RGB}{225, 225, 225}
+%	\definecolor{RoyalLightGray}{RGB}{30, 30, 30}
+%	\definecolor{RoyalRed}{RGB}{255, 177, 151} % 207, 102, 121
+%	\definecolor{RoyalBlue}{RGB}{187, 134, 252} % 55, 185, 255
+%	\definecolor{RoyalGreen}{RGB}{3, 218, 198} % 52, 177, 20
+%	\definecolor{RoyalPageCoulor}{RGB}{18, 18, 18} % 30, 30, 30
+%	\definecolor{RoyalTextCoulor}{RGB}{225, 225, 225}
+%	\pagecolor{RoyalPageCoulor}
+%	\color{RoyalTextCoulor}
 
 \RequirePackage{amsmath, amsthm}
 	\allowdisplaybreaks
@@ -146,8 +146,8 @@ indent_length "2"
 {
 	columns = fullflexible,
 	basicstyle = \ttfamily\upshape\small,
-	alsoletter =  {\\,-,*,/},
-	keywords = [0]{style-inf, style-var, style-frac, style-frac-/, style-notation, style-notation-*, scale-eval, scale-eval-/, scale-fun, scale-var, scale-var-*, scale-frac, scale-frac-/, delims-eval, delims-eval-/, delims-fun, delims-var, delims-var-*, delims-frac, delims-frac-/, sep-inf-ord, sep-inf-fun, sep-ord-fun, sep-frac-fun, sep-inf-var, sep-var-ord, sep-var-inf, sep-ord-inf, sep-var-var, sep-eval-sb, sep-eval-sp, sep-begin, sep-inf-ord, sep-inf-var, sep-ord-var, sep-var-inf, sep-ord-ord, sep-end, switch-*, switch-/, switch-sort, sort-method, sort-numerical, sort-abs-reverse, sort-lexical-reverse, sort-number-reverse, sort-sign-reverse, sort-symbol-reverse, fun, frac, var, order, ord, mixed-order, mixord, scale-auto},
+	alsoletter =  {\\,-,*,/,!},
+	keywords = [0]{style-inf, style-inf-num, style-inf-den, style-var, style-var-/, style-var-!, style-var-/!, style-frac, style-frac-/, style-notation, style-notation-*, scale-eval, scale-eval-/, scale-fun, scale-var, scale-var-*, scale-frac, scale-frac-/, delims-eval, delims-eval-/, delims-fun, delims-var, delims-var-*, delims-frac, delims-frac-/, sep-inf-ord, sep-inf-fun, sep-ord-fun, sep-frac-fun, sep-inf-var, sep-var-ord, sep-var-inf, sep-ord-inf, sep-ord-ord, sep-ord-var, sep-var-var, sep-eval-sb, sep-eval-sp, sep-begin, sep-end, switch-*, switch-/, switch-!, switch-sort, sort-method, sort-numerical, sort-abs-reverse, sort-lexical-reverse, sort-number-reverse, sort-sign-reverse, sort-symbol-reverse, fun, frac, var, order, ord, mixed-order, mixord, scale-auto},
 	keywordstyle = [0]\__mydoc_option_font:,
 	keywords = [1]{\\odv, \\pdv, \\mdv, \\fdv, \\adv, \\jdv, \\odif, \\pdif, \\mdif, \\fdif, \\adif, \\NewDerivative, \\RenewDerivative, \\ProvideDerivative, \\DeclareDerivative, \\NewDifferential, \\RenewDifferential, \\ProvideDifferential, \\DeclareDifferential, \\slashfrac, \\derivset},
 	keywordstyle = [1]\__mydoc_function_font:,
@@ -1335,7 +1335,7 @@ indent_length "2"
 \Forfatter{Simon Jensen}
 \Email{sjelatex@gmail.com}
 \Dato{2022/07/09}
-\Version{1.1}
+\Version{1.3}
 
 \RequirePackage{derivative}[\dato]
 %	\derivset{all}[scale-auto = mleftmright]
@@ -1379,7 +1379,7 @@ indent_length "2"
 	\clearpage
 	\section{Introduction}
 This package started as a personal package a few years ago that I used in various projects. Firstly, it was written in \tex{} and \latex, which gave rise to various errors as the complexity of the package grew larger and ended up as a spaghetti code. Therefore, the code was rewritten into the \latex3 language and may now be easily maintained. Originally this package was written because there did not exist any great package for derivatives. It was first much later that I discovered the \pkg{diffcoeff} package, which does a good job. However, at this time, I had already written much of the code with no documentation. So I decided to write one and make it into a package for the public.
-
+	
 As a note on terminology, I use the wording \emph{infinitesimal} abbreviated as \texttt{inf} for the operator symbols $d, \partial, \delta$ etc. that used in derivatives like $\odv{y}{x}, \pdv{y}{x}, \fdv{y}{x}$ and in differentials like $\odif{x}, \pdif{x}, \fdif{x}$. In the description of macros and options, I often write \emph{cs-\meta{placeholder}} to denote a comma-separated list of \meta{placeholder}. For example, \oarg{cs-numbers} is used in the option section for math space keys to denote comma-separated list of numbers. It should also be noted that whenever an argument reads \meta{keyvalue list}, it means that it is a comma-separated list of keyvalue pairs.
 
 \bigskip
@@ -1389,11 +1389,11 @@ As a note on terminology, I use the wording \emph{infinitesimal} abbreviated as 
 
 	
 	\clearpage
-	\section{Derivative}
+	\section{Derivative}\label{sec:derivative}
 
 \begin{function}*{\pdv}
 	\begin{syntax}
-		\sarg, \oarg{keyval list}, \marg{function}, \targ{/}, \marg{variables}, \earg{\_, point\tsb{1}, \^, point\tsb{2}}
+		\sarg, \oarg{keyval list}, \marg{function}, \targ{/}, \targ{!}, \marg{variables}, \earg{\_, point\tsb{1}, \^, point\tsb{2}}
 	\end{syntax}
 	The partial derivative \macro{1} is defined with a set of mandatory and optional arguments that either typeset specific parts or changing the style of the derivative. In this package, the partial derivative is defined with an italic partial differential $\partial$ as
 	
@@ -1417,10 +1417,10 @@ As a note on terminology, I use the wording \emph{infinitesimal} abbreviated as 
 		The second argument is optional and is written inside square brackets. This argument is used to set the options of the derivative using a \keyval[index=false]{key}{value} semantic. For example the order of differentiation can be set via the \key[cat=misc]{order} option
 		
 		\begin{example}
-			\pdv[order={2,3}]{f}{x,y} \\
+			\pdv[order={2,3}]{f}{x,y,z} \\
 			\pdv[order={\beta,a,n+2a}]{f}{x,y,z} \\
 			\pdv[order={2,n^2,n^2-1}]{f}{x,y,z} \\
-			\pdv[order={2,n^2}]{f}{x,y,z}
+			\pdv[order={3/2-n/3,n/2,1/3}]{f}{x,y,z}
 		\end{example}
 		
 		\noindent The list of options that can be applied to derivatives can be found in \cref{ssec:options_dv}.
@@ -1436,21 +1436,37 @@ As a note on terminology, I use the wording \emph{infinitesimal} abbreviated as 
 			\pdv{e^x\sin(y)\ln(z)}{x,y,z}
 		\end{example}
 		
-		\noindent The function is simply typeset in the numerator or next to the fraction.
+		\noindent The function is simply typeset in the numerator or to the right of the derivative.
 	\end{argument}
 	
-	\begin{argument}{4}
-		The fourth argument is an optional slash written \emph{between the function and the variable} arguments and determines which fraction style the derivative is typeset with, as described in \cref{ssec:options_dv}. Using the option \keyval{switch-/}{false} and the package's default fractions, the derivative is typeset with \cs{frac} when the slash is absent, and \cs{slashfrac}\footnote{which is a macro defined by the package, see \cref{ssec:slashfrac} for more information.\label{foot:sfrac}} when the slash is present, as shown below
+	\begin{argument}{4}[updated = v1.3]
+		The fourth argument is an optional slash written \emph{between the function and the variable} arguments and means alternative style. When the exclamation mark argument is absent, the slash determines which fraction style the derivative is typeset with, as described in \cref{ssec:options_dv}. Using the package's default, the derivative is typeset with \cs{frac} when the slash is absent, and \cs{slashfrac}\footnote{which is a macro defined by the package, see \cref{ssec:slashfrac} for more information.\label{foot:sfrac}} when the slash is present, as shown below
 		
 		\begin{example}
 			\pdv{f}{x,y} \\
 			\pdv{f}/{x,y}
 		\end{example}
 		
+		\noindent When the exclamation mark argument is present, the slash argument switches between compact styles instead of fraction styles (see below).
+		
 		\noindent As for the star argument, the effect of the slash's presence can be switched around using \keyval{switch-/}{true} i.e. the equations in the above example are exchanged.
 	\end{argument}
 	
-	\begin{argument}{5}
+	\begin{argument}{5}[new = v1.3]
+		The fifth argument is an optional exclamation mark written \emph{between the function and the variable} arguments and switches the derivative into compact style, as described in \cref{ssec:options_dv}. Using the option \keyval{switch-!}{false} and the package's default fractions, the derivative is typeset with \cs{frac} when the slash is absent, and \cs{slashfrac} when the slash is present, as shown below
+		
+		\begin{example}
+			\pdv{f}!{x,y} \\
+			\pdv{f}/!{x,y}
+		\end{example}
+		
+		\noindent As for the star argument, the effect of the exclamations mark's presence can be switched around using \keyval{switch-!}{true} i.e. the equations in the above example are exchanged.
+		\begin{note}
+			The order of \targ{/} and \targ{!} is important i.e. \cs{pdv}\narg{f}\targ{!}\targ{/}\narg{x,y} gives $\pdv{f}!/{x,y}$ and not the indented output $\pdv{f}/!{x,y}$.
+		\end{note}
+	\end{argument}
+	
+	\begin{argument}{6}
 		This is the second and final mandatory argument, which purpose is to typeset the variable in which the function is differentiated with respect to. The variables are given in a comma-separated list e.g. \texttt{\{x, y, z\}}
 		
 		\begin{example}
@@ -1461,7 +1477,7 @@ As a note on terminology, I use the wording \emph{infinitesimal} abbreviated as 
 		%\noindent The variable is always typeset in the denominator.
 	\end{argument}
 	
-	\begin{argument}{6}
+	\begin{argument}{7}
 		This is the last optional argument that specifies the point(s) of evaluation or variables held constant. It is an \emph{e-type} argument in the \pkg{xparse} language and is given by \verb|e{_^}|. This means that the subscript \verb|_| and superscript \verb|^| accepts an argument given in braces. Moreover, the order of \verb|_| and \verb|^| is independent as shown below
 		
 		\begin{example}
@@ -1478,7 +1494,7 @@ As a note on terminology, I use the wording \emph{infinitesimal} abbreviated as 
 
 \subsection{Other derivatives}
 This package offers five other derivatives: Ordinary derivative \macro{\odv}, material derivative \macro{\mdv}, functional derivative \macro{\fdv}, the average rate of change \macro{\adv} and the Jacobian \macro{\jdv}. A unique feature of this package, is that you can define your own derivatives as described in \cref{ssec:defvar_dv}.
-	
+
 \begin{function}{\odv}[updated=v1.1]
 	\begin{syntax}
 		\sarg, \oarg{keyval list}, \marg{function}, \targ{/}, \marg{variables}, \earg{\_, point\tsb{1}, \^, point\tsb{2}}
@@ -1551,7 +1567,7 @@ This package offers five other derivatives: Ordinary derivative \macro{\odv}, ma
 		\sarg, \oarg{keyval list}, \marg{function}, \targ{/}, \marg{variables}, \earg{\_, point\tsb{1}, \^, point\tsb{2}}
 	\end{syntax}
 	The Jacobian is defined to use an italic partial differential with the package's default settings. Also a pair of parentheses is automatically inserted around the function and variable. In this package, the Jacobian is defined as
-		
+	
 	\begin{definition}
 		\DeclareDerivative{\jdv}{\partial}[fun=true, var=1]
 	\end{definition}
@@ -1562,48 +1578,10 @@ This package offers five other derivatives: Ordinary derivative \macro{\odv}, ma
 	\end{equation*}
 \end{function}
 
-\begin{align}
-	\odv[order=1/2]{y}{x} \\
-	\odv[order=2/2]{y}{x} \\
-	\odv[order=3/2]{y}{x}
-\end{align}
 
-\begin{align}
-	\pdv[order=1/2]{y}{x} \\
-	\pdv[order=2/2]{y}{x} \\
-	\pdv[order=3/2]{y}{x}
-\end{align}
-
-\begin{align}
-	\pdv[order={1/2m,n/2,2+k}]{f}{x,y,z} \\
-	\pdv[order={n/2,n/2,n}]{f}{x,y,z} \\
-	\pdv[order={3/2,n,2}]{f}{x,y,z} \\
-	\pdv[order={1/2,-1/2,1}]{f}{x,y,z} \\
-	\pdv[order={1/2,-1/2,2/n}]{f}{x,y,z} \\
-	\pdv[order={1/n,-1/n}]{f}{x,y} \\
-	\pdv[order={1/2,-1/2}]{f}{x,y} \\
-	\pdv[order={-1/2,-1/2}]{f}{x,y,z} \\
-	\pdv[order={1/m+1/2n,1/m+1/3n,1/k+2/k}]{f}{x,y,z} \\
-\end{align}
-
-\begin{align}
-	\pdv[order={1/2m,1/(2m)}]{f}{x,y,z} \\
-	\pdv[switch-sort=false,order={(m+n)/2,n,2m}]{f}{x,y,z} \\
-\end{align}
-
-\begin{align}
-	\qdv[order={2,n,1+m,n}]{f}{x,y,z,t} \\
-	\qdv*[order={2,n,1+m,n}]{f}{x,y,z,t} \\
-	\qdv[order={2,n,1+m,n}]{f}/{x,y,z,t} \\
-	\qdv*[order={2,n,1+m,n}]{f}/{x,y,z,t} \\
-	\qdv[order={2,n,1+m,n}]{f}!{x,y,z,t} \\
-	\qdv*[order={2,n,1+m,n}]{f}!{x,y,z,t} \\
-	\qdv[order={2,n,1+m,n}]{f}/!{x,y,z,t} \\
-	\qdv*[order={2,n,1+m,n}]{f}/!{x,y,z,t}
-\end{align}
 	
 	\clearpage
-	\section{Differentials}
+	\section{Differentials}\label{sec:differential}
 
 \begin{function}*{\odif}[new = v1.0, updated=v1.1]
 	\begin{syntax}
@@ -1663,7 +1641,7 @@ This package offers four other differentials: partial differential \macro{\pdif}
 		style-notation-*=mixed]
 	\end{definition}
 	
-	\noindent The non-star and star version gives
+	\noindent The non-star and star version gives (left side)
 	\begin{align*}
 		\pdif[order={i,j,k}]{x,y,z} &\coloneq \pdv[order={i,j,k}]{}{x,y,z} \\
 		\pdif*[order={i,j,k}]{x,y,z} &\coloneq \pdv[order={i,j,k}]{}{x,y,z}
@@ -1719,7 +1697,7 @@ This package offers four other differentials: partial differential \macro{\pdif}
 		\DeclareDifferential{\adif}{\Delta}
 	\end{definition}
 	
-	\noindent For example
+	\noindent For example, the difference between two energy levels may be written as
 	\begin{align*}
 		\adif{E} = E_2 - E_1
 	\end{align*}
@@ -1788,7 +1766,21 @@ The options in this subsection are available for derivatives defined by the pack
 
 \subsubsection*{Style}
 
-\begin{option}*{style-inf}[updated = v1.0]
+\begin{option}*{style-inf}[updated = {v1.0, v1.3}]
+	\begin{values}[default = d]
+		\meta{math-font-style}\meta{infinitesimal}
+	\end{values}
+	Sets the derivative's infinitesimal including font style. It is a meta key, meaning it sets the value of both \key{style-inf-num} and \key{style-inf-den} in one go.
+\end{option}
+
+\begin{option}{style-inf-num}[new = v1.3]
+	\begin{values}[default = d]
+		\meta{math-font-style}\meta{infinitesimal}
+	\end{values}
+	Sets the infinitesimal including font style used in the derivative's numerator. This option is also used in the compact versions i.e. when the exclamation mark argument is used.
+\end{option}
+
+\begin{option}{style-inf-den}[new = v1.3]
 	\begin{values}[default = d]
 		\meta{math-font-style}\meta{infinitesimal}
 	\end{values}
@@ -1816,6 +1808,38 @@ The options in this subsection are available for derivatives defined by the pack
 		single, multiple
 	\end{values}
 	This option determines how the derivative treats its variables and some features. The variable argument is treated as a single variable when \val{single} is used. Moreover the mixed order is set equal to the first order given in \keyval[cat=misc]{order}{\meta{order}} which by default is \val{1}. The variable argument is treated as a comma separated list of variables with \val{multiple} similarly to a partial derivative. Moreover the mixed order is automatically calculated from the list of orders given in \keyval[cat=misc]{order}{\meta{order}}.
+	
+	\begin{example}
+		\pdv[style-var=single]{f}{x, y, z} \\
+		\pdv[style-var=multiple]{f}{x, y, z}
+	\end{example}
+\end{option}
+
+\begin{option}{style-var-/}[new = v1.3]
+	\begin{values}[default = single]
+		single, multiple
+	\end{values}
+	This option behaves identical to \key{style-var}, however it is used when the slash argument is present and the exclamation mark is absent assuming \keyval{switch-/}{false} and \keyval{switch-!}{false}.
+\end{option}
+
+\begin{option}{style-var-!}[new = v1.3]
+	\begin{values}[default = single]
+		single, multiple, mixed
+	\end{values}
+	This options sets the shorthand notation of the derivative i.e. when the exclamation mark is present. When \val{single} is used, a single differential is created with the variables and orders in a subscript and superscript, respectively. The value \val{multiple} creates a differential for each variable. While the value \val{mixed} creates differentials their variable and order in a subscript and superscript, respectively.
+	
+	\begin{example}
+		\pdv[style-var-!=single]{f}!{x, y, z} \\
+		\pdv[style-var-!=multiple]{f}!{x, y, z} \\
+		\pdv[style-var-!=mixed]{f}!{x, y, z}
+	\end{example}
+\end{option}
+
+\begin{option}{style-var-/!}[new = v1.3]
+	\begin{values}[default = single]
+		single, multiple, mixed
+	\end{values}
+	This option behaves identical to \key{style-var-!}, however it is used when both the exclamation mark and slash arguments are present assuming \keyval{switch-/}{false} and \keyval{switch-!}{false}.
 \end{option}
 
 \subsubsection*{Scaling}
@@ -1908,7 +1932,7 @@ The options in this subsection are available for derivatives defined by the pack
 	This key sets the left and right delimiters used around the fraction in the derivative e.g. $\pdv*[frac=true]{y}/{x}$. These delimiters are inserted whenever \keyval{switch-/}{false}, the slash argument is present and \keyval[cat=misc]{frac}{true} is used. The key's default left and right delimiters are a left and a right parenthesis, respectively.
 \end{option}
 
-\subsubsection*{Math spacing}
+\subsubsection*{Math spacing and separators}
 The options in this subsection inserts extra horizontal math space. The below equation illustrates where the space is inserted for each option
 \begin{align*}
 	\begin{gathered}
@@ -1939,6 +1963,10 @@ where the Jacobian have been used as an example.
 		\meta{cs-number}, \marg{mspace}, \marg{delimiter}
 	\end{values}
 	Sets the math space that is inserted in the infinitesimal's power left to the mixed order in the numerator. It is only inserted when the mixed order is different from \num{1}. The key's default value is \default{} \texttt{mu}.
+	\begin{example}
+		\pdv[sep-inf-ord=\ms{here}]{f}{x,y} \\
+		\pdv[sep-inf-ord=\ms{here}]{f}!{x,y}
+	\end{example}
 \end{option}
 
 \begin{option}{sep-inf-fun}
@@ -1946,6 +1974,9 @@ where the Jacobian have been used as an example.
 		\meta{cs-number}, \marg{mspace}, \marg{delimiter}
 	\end{values}
 	This key sets the math space that is inserted between the infinitesimal and the function when the mixed order \emph{is equal} to \num{1}. The space is only inserted when a non-blank function is printed \emph{in the numerator}. The key's default value is \default{} \texttt{mu}.
+	\begin{example}
+		\pdv[sep-inf-fun=\ms{here}]{f}{x}
+	\end{example}
 \end{option}
 
 \begin{option}{sep-ord-fun}
@@ -1953,6 +1984,9 @@ where the Jacobian have been used as an example.
 		\meta{cs-number}, \marg{mspace}, \marg{delimiter}
 	\end{values}
 	This key sets the math space that is inserted between the infinitesimal's order and the function when the mixed order \emph{is different} from \num{1}. The space is only inserted when a non-blank function is printed \emph{in the numerator}. The key's default value is \default{} \texttt{mu}.
+	\begin{example}
+		\pdv[sep-ord-fun=\ms{here}]{f}{x,y}
+	\end{example}
 \end{option}
 
 \begin{option}{sep-frac-fun}[new = v1.0]
@@ -1960,6 +1994,9 @@ where the Jacobian have been used as an example.
 		\meta{cs-number}, \marg{mspace}, \marg{delimiter}
 	\end{values}
 	This key sets the math space that is inserted between the fractional part of the derivative and the function. The space is only inserted when a non-blank function is printed \emph{next to the derivative}. The key's default value is \default{} \texttt{mu}.
+	\begin{example}
+		\pdv*[sep-frac-fun=\ms{here}]{f}{x,y}
+	\end{example}
 \end{option}
 
 \begin{option}{sep-inf-var}
@@ -1967,6 +2004,10 @@ where the Jacobian have been used as an example.
 		\meta{cs-number}, \marg{mspace}, \marg{delimiter}
 	\end{values}
 	This key sets the math space that is inserted between the infinitesimal and the following variable. The space is only inserted when a non-blank variable is given. The key's default value is \default{} \texttt{mu}.
+	\begin{example}
+		\pdv[sep-inf-var=\ms{here}]{f}{x,y} \\
+		\pdv[sep-inf-var=\ms{here}]{f}!{x,y}
+	\end{example}
 \end{option}
 
 \begin{option}{sep-var-ord}
@@ -1974,6 +2015,9 @@ where the Jacobian have been used as an example.
 		\meta{cs-number}, \marg{mspace}, \marg{delimiter}
 	\end{values}
 	This key sets the math space that is inserted in a variable's power left to the order. The space is only inserted when the order is different from \num{1}. The key's default value is \default{} \texttt{mu}.
+	\begin{example}
+		\pdv[sep-var-ord=\ms{here}, order=n]{f}{x,y}
+	\end{example}
 \end{option}
 
 \begin{option}{sep-var-inf}
@@ -1981,20 +2025,51 @@ where the Jacobian have been used as an example.
 		\meta{cs-number}, \marg{mspace}, \marg{delimiter}
 	\end{values}
 	They key sets the math space that is inserted between a variable and the following infinitesimal. The space is only inserted when the variable's order \emph{is equal} to \num{1}. It is only inserted when more than one non-blank variables are given. The key's default value is \val{\default}.
+	\begin{example}
+		\pdv[sep-var-inf=\ms{here}, order=n]{f}{x,y,z} \\
+		\pdv[sep-var-inf=\ms{here}, order=n]{f}!{x,y,z}
+	\end{example}
 \end{option}
 
 \begin{option}{sep-ord-inf}
 	\begin{values}[default = \cs{mathop}\{\}\cs{!}]
 		\meta{cs-number}, \marg{mspace}, \marg{delimiter}
 	\end{values}
-	They key sets the math space that is inserted between a variable and the following infinitesimal. The space is only inserted when the variable's order \emph{is different} from \num{1}. It is only inserted when more than one non-blank variables are given. The key's default value is \val{\default}.
+	They key sets the math space that is inserted between a order and the following infinitesimal. The space is only inserted when the variable's order \emph{is different} from \num{1}. It is only inserted when more than one non-blank variables are given. The key's default value is \val{\default}.
+	\begin{example}
+		\pdv[sep-ord-inf=\ms{here}, order=n]{f}{x,y,z}
+	\end{example}
+\end{option}
+
+\begin{option}{sep-ord-ord}[new = v1.3]
+	\begin{values}[default = {{,}}]
+		\meta{cs-number}, \marg{mspace}, \marg{delimiter}
+	\end{values}
+	They key sets the math space that is inserted between two orders. The space is only inserted when more than one non-blank variables are given, and the option \keyval{style-var} and its variants is \val{single}. The key's default value is a comma.
+	\begin{example}
+		\pdv[sep-ord-ord=\ms{here}, order={n,2}]{f}/!{x,y}
+	\end{example}
+\end{option}
+
+\begin{option}{sep-ord-var}[new = v1.3]
+	\begin{values}[default = 0]
+		\meta{cs-number}, \marg{mspace}, \marg{delimiter}
+	\end{values}
+	They key sets the math space that is inserted between an order and the following variable. The space is only inserted in shorthand mode when the variable style set to \val{multiple}. The key's default value is \default{} \texttt{mu}.
+	\begin{example}
+		\odv[sep-ord-var=\ms{here}, order=n]{f}!{x,y}
+	\end{example}
 \end{option}
 
 \begin{option}{sep-var-var}[new = v1.0]
 	\begin{values}[default = {{,}}]
 		\meta{cs-number}, \marg{mspace}, \marg{delimiter}
 	\end{values}
-	They key sets the math space that is inserted between two variables. The space is only inserted when the \keyval{style-var}{single} is used. and when more than one non-blank variables are given. The key's default value is a comma.
+	They key sets the math space that is inserted between two variables. The space is only inserted when more than one non-blank variables are given, and the option \keyval{style-var} and its variants is \val{single}. The key's default value is a comma.
+	\begin{example}
+		\pdv[sep-var-var=\ms{here}, style-var=single]{f}{x,y} \\
+		\pdv[sep-var-var=\ms{here}]{f}/!{x,y}
+	\end{example}
 \end{option}
 
 \clearpage
@@ -2004,6 +2079,9 @@ where the Jacobian have been used as an example.
 		\meta{cs-number}, \marg{mspace}, \marg{delimiter}
 	\end{values}
 	This key sets the math space that is inserted in the evaluation subscript left to the point of evaluation. The space is only inserted when a non-blank subscript is given. The key's default value is \default{} \texttt{mu}.
+	\begin{example}
+		\pdv[sep-eval-sb=\ms{here}]{f}{x,y}_{(x_1,y_1)}
+	\end{example}
 \end{option}
 
 \begin{option}{sep-eval-sp}
@@ -2011,6 +2089,9 @@ where the Jacobian have been used as an example.
 		\meta{cs-number}, \marg{mspace}, \marg{delimiter}
 	\end{values}
 	This key sets the math space that is inserted in the evaluation superscript left to the point of evaluation. The space is only inserted when a non-blank superscript is given. The key's default value is \default{} \texttt{mu}.
+	\begin{example}
+		\pdv[sep-eval-sp=\ms{here}]{f}{x,y}^{(x_2,y_2)}
+	\end{example}
 \end{option}
 
 \subsubsection*{Switches}
@@ -2038,6 +2119,20 @@ where the Jacobian have been used as an example.
 	\begin{example}
 		\pdv[switch-/=false]{y}{x} \\
 		\pdv[switch-/=true]{y}{x}
+	\end{example}
+	
+	\noindent respectively. The key's default value is \default.
+\end{option}
+
+\begin{option}{switch-!}[new = 1.3]
+	\begin{values}[default = false]
+		true, false
+	\end{values}
+	The effect of the exclamation mark argument's presence can be switched with the value \val{true}. That is, the derivative is in shorthand mode the exclamation mark is absent and in fraction mode when the exclamation is present. As an example, compare below where the option is turned on (\val{true}) and off (\val{false})
+	
+	\begin{example}
+		\pdv[switch-!=false]{y}!{x} \\
+		\pdv[switch-!=true]{y}!{x}
 	\end{example}
 	
 	\noindent respectively. The key's default value is \default.
@@ -2204,7 +2299,7 @@ The options in this subsection are available for differentials defined by the pa
 	Sets the differential's infinitesimal including font style. This change was necessary to allow multiple font styles, e.g. \keyval{style-inf}{\cs{mathbf}\narg{\cs{mathrm}\narg{d}}}. The default infinitesimal is a plain `\default` with no associated font style.
 \end{option}
 
-\begin{option}{style-notation}
+\begin{option}{style-var}[updated=1.3]
 	\begin{values}[default = multiple]
 		single, multiple, mixed
 	\end{values}
@@ -2217,7 +2312,7 @@ The options in this subsection are available for differentials defined by the pa
 	\end{example}
 \end{option}
 
-\begin{option}{style-notation-*}
+\begin{option}{style-var-*}[updated=1.3]
 	\begin{values}[default = single]
 		single, multiple, mixed
 	\end{values}
@@ -2256,7 +2351,7 @@ The options in this subsection are available for differentials defined by the pa
 	Sets the left and right delimiters used around the variable when the star argument is present (given \keyval{switch-*}{false}). The delimiters are inserted when \keyval[cat=misc]{var}{true} is used. The key's default delimiters are a left and right parenthesis, respectively.
 \end{option}
 
-\subsubsection*{Math spacing}
+\subsubsection*{Math spacing and separators}
 The options in this subsection inserts extra horizontal math space. Below, illustrates where the space is inserted for each option
 \begin{align*}
 	\begin{gathered}
@@ -2394,6 +2489,7 @@ This section goes into detail with how to define derivative and differential var
 		\item \macro{3} is similar to \cs{ProvideDocumentCommand} of the \pkg{xparse} package and will define \arg{1} if it does not have an existing definition. It will not issue any errors.
 		\item \macro{4} is similar to \cs{DeclareDocumentCommand} of the \pkg{xparse} package and will always define the \arg{1} with the new definition regardless of whether it already exists.
 	\end{itemize}
+	Examples of their use can be found in \cref{sec:derivative}.
 	
 	\begin{argument}{1}
 		The first argument is the macro name of the derivative that is to be defined.
@@ -2422,6 +2518,7 @@ This section goes into detail with how to define derivative and differential var
 		\item \macro{3} is similar to \cs{ProvideDocumentCommand} of the \pkg{xparse} package and will define \arg{1} if it does not have an existing definition. It will not issue any errors.
 		\item \macro{4} is similar to \cs{DeclareDocumentCommand} of the \pkg{xparse} package and will always define the \arg{1} with the new definition regardless of whether it already exists.
 	\end{itemize}
+	Examples of their use can be found in \cref{sec:differential}.
 	
 	\begin{argument}{1}
 		The first argument is the macro name of the differential that is to be defined.
@@ -2452,7 +2549,7 @@ A unique feature of this package is that the sorting method behind the mixed ord
 	\item The sorting by \val{lexical} sorts the terms in a lexicographical order that is alphabetically. The option \keyval{sort-lexical-reverse}{true} sort the terms in reverse lexicographical ordering.
 \end{itemize}
 
-When using the option \keyval{sort-method}{\{...\}}, the number of algorithms determines the number of layers e.g. \keyval*{sort-method}{sign,symbol} is a sorting method with two layers, where the algorithms \val{sign} and \val{symbol} are applied in layer \num{1} and layer \num{2}, respectively. E.i the \val{sign} algorithm splits the terms into two groups, one with positive terms and one with negative terms. Then the \val{symbol} algorithm will sorts the terms within each groups according to the terms symbolic length. The mixed order is then formed by combining these two groups.
+When using the option \keyval{sort-method}{\{...\}}, the number of algorithms determines the number of layers e.g. \keyval*{sort-method}{sign,symbol} is a sorting method with two layers, where the algorithms \val{sign} and \val{symbol} are applied in layer \num{1} and layer \num{2}, respectively. E.i the \val{sign} algorithm splits the terms into two groups, one with positive terms and one with negative terms. Then the \val{symbol} algorithm will sorts the terms within each groups according to the terms symbolic length. The mixed order is then formed by combining these two sorted groups.
 
 \subsubsection{Examples}
 The examples below are uses partial derivatives with \keyval*[cat=misc]{order}{3a-3hh-2b, 4c+4gg+2ff, -5d-5ee} and a close up view of the mixed order. Square brackets are used to indicate grouping of terms and the text below a group refers to the algorithm applied. Here the words positive and negative, long and short, and big and low refers to the \val{sign}, \val{symbol}, and \val{abs} algorithms, respectively. A row of square brackets represents a layer.
