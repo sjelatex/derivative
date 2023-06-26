@@ -4,13 +4,13 @@ The package provides a set of commands `\NewDerivative`, `\NewDifferential` etc.
 
  - `\odv`   Ordinary derivative
  - `\pdv`   Partial derivative
- - `\fdv`   Functional derivtive
+ - `\fdv`   Functional derivative
  - `\mdv`   Material derivative
  - `\adv`   Average rate of change
  - `\jdv`   Jacobian
  - `\odif`  Shorthand for ordinary derivative
  - `\pdif`  Shorthand for partial derivative
- - `\fdif`  Shorthand for functonal derivative
+ - `\fdif`  Shorthand for functional derivative
  - `\mdif`  Shorthand for material derivative or general differential operator
  - `\adif`  Difference
  
