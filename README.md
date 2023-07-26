@@ -1,4 +1,4 @@
-## README for derivative package v1.2 dated 2022-07-09
+## README for derivative package v1.3 dated 2023-07-26
 
 The package provides a set of commands `\NewDerivative`, `\NewDifferential` etc. that can be used to define a derivative or a differential operator, respectively. The package have already defined several derivatives and differentials:
 
@@ -16,7 +16,7 @@ The package provides a set of commands `\NewDerivative`, `\NewDifferential` etc.
  
 ### Copyright and license
 
-Copyright 2019-2022 Simon Jensen
+Copyright 2019-2023 Simon Jensen
 
 This work may be distributed and/or modified under the
 conditions of the LaTeX Project Public License, either version 1.3
@@ -29,10 +29,11 @@ version 2005/12/01 or later.
 This work has the LPPL maintenance status `maintained`.
 
 The Current Maintainer of this work is Simon Jensen.
+Contributors: Romain Noel
 
 The bundle contains the files:
 
      README.md           This file.
      derivative.sty      The package itself.
      derivative.pdf      The package documentation in PDF format.
-     derivative.txt      The master file that produced derivative.pdf.
+     derivative.tex      The master file that produced derivative.pdf.
