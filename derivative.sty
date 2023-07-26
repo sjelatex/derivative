@@ -1,5 +1,5 @@
 % derivative.sty
-% Copyright 2019-2022 Simon Jensen
+% Copyright 2019-2023 Simon Jensen
 % 
 % This work may be distributed and/or modified under the
 % conditions of the LaTeX Project Public License, either version 1.3
@@ -19,7 +19,7 @@
 \RequirePackage{expl3}[2021/11/07]
 \RequirePackage{xparse}[2021/11/07]
 \RequirePackage{l3keys2e}
-\ProvidesExplPackage{derivative}{2022/07/09}{1.2}{Nice and easy derivatives and differentials for LaTeX}
+\ProvidesExplPackage{derivative}{2023/07/26}{1.3}{Nice and easy derivatives and differentials for LaTeX}
 
 \bool_new:N \l__deriv_pkg_italic_bool
 \bool_new:N \l__deriv_pkg_upright_bool
@@ -176,6 +176,7 @@
 	style-var-/!  = single,
 	scale-eval    = auto,
 	scale-eval-/  = auto,
+	scale-eval-!  = auto,
 	scale-fun     = auto,
 	scale-var     = auto,
 	scale-var-!   = auto,
@@ -183,6 +184,7 @@
 	scale-frac-/  = auto,
 	delims-eval   = .\rvert,
 	delims-eval-/ = .\rvert,
+	delims-eval-! = .\rvert,
 	delims-fun    = (),
 	delims-var    = (),
 	delims-var-!  = (),
@@ -281,6 +283,7 @@
 		
 		scale-eval   .choices:nn = { auto, none, big, Big, bigg, Bigg } { \__deriv_set_scale:nnn {dv_#1} {##1} { eval } },
 		scale-eval-/ .choices:nn = { auto, none, big, Big, bigg, Bigg } { \__deriv_set_scale:nnn {dv_#1} {##1} { eval_slash } },
+		scale-eval-! .choices:nn = { auto, none, big, Big, bigg, Bigg } { \__deriv_set_scale:nnn {dv_#1} {##1} { eval_compact } },
 		scale-fun    .choices:nn = { auto, none, big, Big, bigg, Bigg } { \__deriv_set_scale:nnn {dv_#1} {##1} { fun } },
 		scale-var    .choices:nn = { auto, none, big, Big, bigg, Bigg } { \__deriv_set_scale:nnn {dv_#1} {##1} { var } },
 		scale-var-!  .choices:nn = { auto, none, big, Big, bigg, Bigg } { \__deriv_set_scale:nnn {dv_#1} {##1} { var_compact } },
@@ -289,6 +292,7 @@
 		
 		delims-eval   .tl_set:c = { l__deriv_dv_#1_delims_eval_tl        },
 		delims-eval-/ .tl_set:c = { l__deriv_dv_#1_delims_eval_slash_tl  },
+		delims-eval-! .tl_set:c = { l__deriv_dv_#1_delims_eval_compact_tl  },
 		delims-fun    .tl_set:c = { l__deriv_dv_#1_delims_fun_tl         },
 		delims-var    .tl_set:c = { l__deriv_dv_#1_delims_var_tl         },
 		delims-var-!  .tl_set:c = { l__deriv_dv_#1_delims_var_compact_tl },
@@ -507,8 +511,8 @@
 \cs_new_protected:Npn \__deriv_dv_variables:n #1
 {
 	\__deriv_new:nnnnn { tl    } { dv } {#1} { style  } { inf_num, inf_den, var, var_compact, var_slash_compact, frac, frac_slash }
-	\__deriv_new:nnnnn { tl    } { dv } {#1} { scale  } { eval, eval_slash, fun, var, frac, frac_slash }
-	\__deriv_new:nnnnn { tl    } { dv } {#1} { delims } { eval, eval_slash, fun, var, frac, frac_slash }
+	\__deriv_new:nnnnn { tl    } { dv } {#1} { scale  } { eval, eval_slash, eval_compact, fun, var, var_compact, frac, frac_slash }
+	\__deriv_new:nnnnn { tl    } { dv } {#1} { delims } { eval, eval_slash, eval_comapct, fun, var, frac, frac_slash }
 	\__deriv_new:nnnnn { tl    } { dv } {#1} { sep    } { inf_ord, inf_fun, ord_fun, frac_fun, inf_var, var_ord, var_inf, ord_inf, ord_ord, ord_var, var_var, eval_sb, eval_sp }
 	\__deriv_new:nnnnn { bool  } { dv } {#1} { switch } { star, slash, compact, sort }
 	\__deriv_new:nnnnn { seq   } { dv } {#1} { sort   } { method }
@@ -516,7 +520,6 @@
 	\__deriv_new:nnnnn { bool  } { dv } {#1} { sort   } { abs_reverse, sign_reverse, symbol_reverse, number_reverse, lexical_reverse }
 	\__deriv_new:nnnnn { bool  } { dv } {#1} { misc   } { fun, frac }
 	\__deriv_new:nnnnn { clist } { dv } {#1} { misc   } { var }
-	
 	\__deriv_new:nnnnn { clist } { dv } {#1} { misc   } { order }
 	\__deriv_new:nnnnn { tl    } { dv } {#1} { misc   } { mixed_order }
 	\__deriv_new:nnnnn { prop  } { dv } {#1} { user   } { keys }
@@ -659,7 +662,7 @@
 \cs_new_protected:Npn \__deriv_dv_compact:nnnnn #1 #2 #3 #4 #5
 {
 	\__deriv_i_preparation:Nnnnn \l__deriv_dv_denom_tl {#1} {#3} { _compact } { _num }
-	\__deriv_evaluation:nnnn {#1} {#4} {#5}
+	\__deriv_evaluation_compact:nnnn {#1} {#4} {#5}
 	{
 		\tl_use:N \l__deriv_dv_denom_tl
 		\__deriv_insert_fun:nnn {#1} {#2} { inf_fun }
@@ -669,7 +672,7 @@
 \cs_new_protected:Npn \__deriv_dv_slash_compact:nnnnn #1 #2 #3 #4 #5
 {
 	\__deriv_i_preparation:Nnnnn \l__deriv_dv_denom_tl {#1} {#3} { _slash_compact } { _num }
-	\__deriv_evaluation:nnnn {#1} {#4} {#5}
+	\__deriv_evaluation_compact:nnnn {#1} {#4} {#5}
 	{
 		%\__deriv_i_print:Nn \l__deriv_i_denom_tl {#1}
 		\tl_use:N \l__deriv_dv_denom_tl
@@ -1065,6 +1068,25 @@
 		\__deriv_if_value:nTF {#3}
 		{
 			\__deriv_add_delims:nnn {#1} { eval_slash } {#4}
+			\sp{ \__deriv_insert_mskip:nn {#1} { eval_sp } #3 }
+		}
+		{#4}
+	}
+}
+% dv, sub, sup, code-for-fraction
+\cs_new:Npn \__deriv_evaluation_compact:nnnn #1 #2 #3 #4
+{
+	\__deriv_if_value:nTF {#2}
+	{
+		\__deriv_add_delims:nnn {#1} { eval_compact } {#4}
+		\sb{ \__deriv_insert_mskip:nn {#1} { eval_sb } #2 }
+		\__deriv_if_value:nT {#3}
+		{ \sp{ \__deriv_insert_mskip:nn {#1} { eval_sp } #3 } }
+	}
+	{
+		\__deriv_if_value:nTF {#3}
+		{
+			\__deriv_add_delims:nnn {#1} { eval_compact } {#4}
 			\sp{ \__deriv_insert_mskip:nn {#1} { eval_sp } #3 }
 		}
 		{#4}
@@ -1769,47 +1791,11 @@
 \DeclareDerivative{\fdv}{\delta}
 \DeclareDerivative{\adv}{\Delta}
 \DeclareDerivative{\jdv}{\partial}[fun=true, var=1]
-\DeclareDerivative{\pdv}{\partial}[style-var=multiple, style-var-/=multiple, style-var-!=mixed, style-var-/!=multiple, delims-eval=(), delims-eval-/=()]
+\DeclareDerivative{\pdv}{\partial}[style-var=multiple, style-var-/=multiple, style-var-!=mixed, style-var-/!=multiple, delims-eval=(), delims-eval-/=(), delims-eval-!=()]
 
 \DeclareDifferential{\fdif}{\delta}
 \DeclareDifferential{\adif}{\Delta}
 \DeclareDifferential{\pdif}{\partial}[style-var=mixed, style-var-*=multiple]
-
-%TODO - test material - delete before release
-\DeclareDerivative{\qdv}{\nabla}
-[
-	%style-var = { single-single },     % dv frac
-	%style-var-* = { single-right },    % delete
-	%style-var-/ = { single-mixed },    % dv compact, i
-	%style-var-! = { multiple-right },  % dv frac
-	%style-var-*/ = { multiple-left },  % dv compact, i
-	%style-var-*! = { multiple-mixed }, % dv compact, i
-	%style-var-/! = { multiple-mixed }, % 
-	%style-var-*/! = { multiple-mixed } % 
-]
-
-\DeclareDerivative{\wdv}{\nabla}
-[
-	%style-var = { single-single },     % dv frac
-	%style-var-* = { single-single },   % delete
-	%style-var-/ = { single-mixed },    % dv compact, i
-	%style-var-! = { multiple-right },  % dv frac
-	%style-var-*/ = { multiple-left },  % dv compact, i
-	%style-var-*! = { multiple-mixed }, % dv compact, i
-	%style-var-/! = { multiple-mixed }, % 
-	%style-var-*/! = { multiple-mixed } % 
-]
-
-%style-var = { single },     % dv frac
-%style-var-/ = { single },    % dv frac
-%style-var-! = { multiple },  % dv compact, i
-%style-var-/! = { single }, % 
-%
-%single-single  % dv frac
-%multiple-right % dv frac
-%single-mixed   % dv compact, i
-%multiple-left  % dv compact, i
-%multiple-mixed % dv compact, i
 
 \endinput
 
