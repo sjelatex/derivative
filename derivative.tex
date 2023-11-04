@@ -42,23 +42,23 @@ group_skip "\n\n\\par\\bigskip\n"
 \RequirePackage[style=english,english=british]{csquotes}
 \RequirePackage[final,babel,auto]{microtype}
 \RequirePackage{xcolor}
-	\definecolor{RoyalGray}{RGB}{127, 144, 158}
-	\definecolor{RoyalDarkGray}{RGB}{78, 93, 104}
-	\definecolor{RoyalLightGray}{RGB}{250, 250, 250}
-	\definecolor{RoyalRed}{RGB}{157, 16, 45}
-	\definecolor{RoyalBlue}{RGB}{0, 35, 102}
-	\definecolor{RoyalGreen}{RGB}{32, 77, 2}
+%	\definecolor{RoyalGray}{RGB}{127, 144, 158}
+%	\definecolor{RoyalDarkGray}{RGB}{78, 93, 104}
+%	\definecolor{RoyalLightGray}{RGB}{250, 250, 250}
+%	\definecolor{RoyalRed}{RGB}{157, 16, 45}
+%	\definecolor{RoyalBlue}{RGB}{0, 35, 102}
+%	\definecolor{RoyalGreen}{RGB}{32, 77, 2}
 
-%	\definecolor{RoyalGray}{RGB}{75, 75, 75}
-%	\definecolor{RoyalDarkGray}{RGB}{225, 225, 225}
-%	\definecolor{RoyalLightGray}{RGB}{30, 30, 30}
-%	\definecolor{RoyalRed}{RGB}{255, 177, 151} % 207, 102, 121
-%	\definecolor{RoyalBlue}{RGB}{187, 134, 252} % 55, 185, 255
-%	\definecolor{RoyalGreen}{RGB}{3, 218, 198} % 52, 177, 20
-%	\definecolor{RoyalPageCoulor}{RGB}{18, 18, 18} % 30, 30, 30
-%	\definecolor{RoyalTextCoulor}{RGB}{225, 225, 225}
-%	\pagecolor{RoyalPageCoulor}
-%	\color{RoyalTextCoulor}
+	\definecolor{RoyalGray}{RGB}{75, 75, 75}
+	\definecolor{RoyalDarkGray}{RGB}{225, 225, 225}
+	\definecolor{RoyalLightGray}{RGB}{30, 30, 30}
+	\definecolor{RoyalRed}{RGB}{255, 177, 151} % 207, 102, 121
+	\definecolor{RoyalBlue}{RGB}{187, 134, 252} % 55, 185, 255
+	\definecolor{RoyalGreen}{RGB}{3, 218, 198} % 52, 177, 20
+	\definecolor{RoyalPageCoulor}{RGB}{18, 18, 18} % 30, 30, 30
+	\definecolor{RoyalTextCoulor}{RGB}{225, 225, 225}
+	\pagecolor{RoyalPageCoulor}
+	\color{RoyalTextCoulor}
 
 \RequirePackage{amsmath, amsthm}
 	\allowdisplaybreaks
@@ -1369,8 +1369,8 @@ group_skip "\n\n\\par\\bigskip\n"
 \Titel{The \pakkenavn{} package}
 \Forfatter{Simon Jensen}
 \Email{sjelatex@gmail.com}
-\Dato{2023/07/26}
-\Version{1.3}
+\Dato{2023/11/04}
+\Version{1.31}
 
 \RequirePackage{derivative}[\dato]
 
@@ -3045,6 +3045,9 @@ Numbers in bold refer to the page where the entry is defined.
 		\item Added new options \key{style-var-/}, \key{style-var-!} and \key{style-var-/!} to set the style of the derivatives.
 		\item Added new options \key{scale-var-!} and \key{delims-var-!} for variable delimiters in shorthand mode.
 		\item Added new options \key{scale-eval-!} and \key{delims-eval-!} for evaluation delimiters in shorthand mode.
+	\end{change}
+	\begin{change}[version=1.31, date=2023-11-04, beta=false]
+		\item Fixed issue relating to the order when nesting derivatives (issues \#14).
 	\end{change}
 \end{changelog}
 
