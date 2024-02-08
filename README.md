@@ -1,4 +1,4 @@
-## README for derivative package v1.31 dated 2023-11-04
+## README for derivative package v1.4 dated 2024-02-08
 
 The package provides a set of commands `\NewDerivative`, `\NewDifferential` etc. that can be used to define a derivative or a differential operator, respectively. The package have already defined several derivatives and differentials:
 
@@ -16,7 +16,7 @@ The package provides a set of commands `\NewDerivative`, `\NewDifferential` etc.
  
 ### Copyright and license
 
-Copyright 2019-2023 Simon Jensen
+Copyright 2019-2024 Simon Jensen
 
 This work may be distributed and/or modified under the
 conditions of the LaTeX Project Public License, either version 1.3
