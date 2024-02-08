@@ -117,6 +117,7 @@
 
 \tl_new:N \l__deriv_cs_name_tl
 \tl_new:N \l__deriv_derivset_tl
+\bool_new:N \l__deriv_first_unknown_key_bool
 
 \tl_new:N \l__deriv_gcd_result_tl
 \tl_new:N \l__deriv_gcd_remain_tl
@@ -581,7 +582,7 @@
 {
 	\exp_args:Nne #1 {#3}{ s o m t/ t! m !e{\char_generate:nn {`_}{8}^} }
 	{
-		\group_begin:
+	\group_begin:
 		\deriv_local_keys:nnn {##2} { dv } {#2}
 
 		\exp_args:Nnc \bool_xor:nnTF {##5} { l__deriv_dv_#2_switch_compact_bool }
@@ -603,7 +604,7 @@
 				{ \__deriv_dv_none:nnnnn {dv_#2} {##3} {##6} {##7} {##8} }
 			}
 		}
-		\group_end:
+	\group_end:
 	}
 }
 % new/delare/renew/provide, variant, macro
@@ -611,13 +612,13 @@
 {
 	#1 {#3}{ s o m }
 	{
-		\group_begin:
+	\group_begin:
 		\deriv_local_keys:nnn {##2} { i } {#2}
 
 		\exp_args:Nnc \bool_xor:nnTF {##1} { l__deriv_i_#2_switch_star_bool }
 		{ \__deriv_inf_star:nn {i_#2} {##3} }
 		{ \__deriv_inf_none:nn {i_#2} {##3} }
-		\group_end:
+	\group_end:
 	}
 }
 
@@ -1553,7 +1554,7 @@
 			\int_set:Nn #1 { #1 / \l__deriv_gcd_result_tl }
 			\int_set:Nn #2 { #2 / \l__deriv_gcd_result_tl }
 		}
-		%}
+	%}
 }
 
 \cs_new:Npn \__deriv_gcd:NN #1 #2
@@ -1680,7 +1681,7 @@
 
 \DeclareDocumentCommand{\slashfrac}{ o m m }
 {
-	\group_begin:
+\group_begin:
 	\tl_if_novalue:nTF {#1}
 	{ \__deriv_slashfrac_auto:nn {#2} {#3} }
 	{
@@ -1691,7 +1692,7 @@
 		}
 		{ \__deriv_slashfrac_scale:nnn {#1} {#2} {#3} }
 	}
-	\group_end:
+\group_end:
 }
 % numerator, denominator
 \cs_new_protected:Npn \__deriv_slashfrac_auto:nn #1 #2
